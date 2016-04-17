@@ -10710,7 +10710,7 @@ Elm.Map.make = function (_elm) {
    var _op = {};
    var column = function (divs) {    return A2($Html.div,_U.list([]),divs);};
    var row = function (divs) {    return A2($Html.div,_U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "height",_1: "32px"}]))]),divs);};
-   var _p0 = {ctor: "_Tuple2",_0: 160,_1: 160};
+   var _p0 = {ctor: "_Tuple2",_0: 224,_1: 224};
    var mapWidth = _p0._0;
    var mapHeight = _p0._1;
    var _p1 = {ctor: "_Tuple2",_0: mapWidth / 2,_1: mapHeight / 2};
@@ -10718,12 +10718,15 @@ Elm.Map.make = function (_elm) {
    var halfMapHeight = _p1._1;
    var map = A2($Html.div,
    _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: A2($Basics._op["++"],$Basics.toString(mapWidth),"px")}
-                                           ,{ctor: "_Tuple2",_0: "height",_1: A2($Basics._op["++"],$Basics.toString(mapHeight),"px")}]))]),
-   _U.list([column(_U.list([row(_U.list([$Sprite.grass1,$Sprite.grass2,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
-                           ,row(_U.list([$Sprite.dirt,$Sprite.dirt,$Sprite.dirt,$Sprite.dirt,$Sprite.leftDirt]))
-                           ,row(_U.list([$Sprite.grass2,$Sprite.grass1,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
-                           ,row(_U.list([$Sprite.grass1,$Sprite.grass2,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
-                           ,row(_U.list([$Sprite.grass2,$Sprite.grass1,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))]))]));
+                                           ,{ctor: "_Tuple2",_0: "height",_1: A2($Basics._op["++"],$Basics.toString(mapHeight),"px")}
+                                           ,{ctor: "_Tuple2",_0: "border",_1: "2px solid black"}]))]),
+   _U.list([column(_U.list([row(_U.list([$Sprite.grass1,$Sprite.grass2,$Sprite.grass1,$Sprite.grass2,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
+                           ,row(_U.list([$Sprite.dirt,$Sprite.dirt,$Sprite.dirt,$Sprite.dirt,$Sprite.dirt,$Sprite.dirt,$Sprite.leftDirt]))
+                           ,row(_U.list([$Sprite.grass2,$Sprite.grass1,$Sprite.grass2,$Sprite.grass1,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
+                           ,row(_U.list([$Sprite.grass1,$Sprite.grass2,$Sprite.grass1,$Sprite.grass2,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
+                           ,row(_U.list([$Sprite.grass2,$Sprite.grass1,$Sprite.grass2,$Sprite.grass1,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
+                           ,row(_U.list([$Sprite.grass2,$Sprite.grass1,$Sprite.grass2,$Sprite.grass1,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
+                           ,row(_U.list([$Sprite.grass1,$Sprite.grass1,$Sprite.grass2,$Sprite.grass1,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))]))]));
    return _elm.Map.values = {_op: _op
                             ,mapHeight: mapHeight
                             ,mapWidth: mapWidth
