@@ -10571,150 +10571,242 @@ Elm.Html.Attributes.make = function (_elm) {
                                         ,manifest: manifest
                                         ,property: property
                                         ,attribute: attribute};
-};
-// setup
-Elm.Native = Elm.Native || {};
-Elm.Native.Markdown = Elm.Native.Markdown || {};
-
-// definition
-Elm.Native.Markdown.make = function(localRuntime) {
-	'use strict';
-
-	// attempt to short-circuit
-	if ('values' in Elm.Native.Markdown)
-	{
-		return Elm.Native.Markdown.values;
-	}
-
-	var Element = Elm.Native.Graphics.Element.make(localRuntime);
-
-	var marked = (function() {
-		// catch the `marked` object regardless of the outer environment.
-		// (ex. a CommonJS module compatible environment.)
-		// note that this depends on marked's implementation of environment detection.
-		var module = {};
-		var exports = module.exports = {};
-
-		/**
-		 * marked - a markdown parser
-		 * Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)
-		 * https://github.com/chjj/marked
-		 */
-		(function(){var block={newline:/^\n+/,code:/^( {4}[^\n]+\n*)+/,fences:noop,hr:/^( *[-*_]){3,} *(?:\n+|$)/,heading:/^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,nptable:noop,lheading:/^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,blockquote:/^( *>[^\n]+(\n(?!def)[^\n]+)*\n*)+/,list:/^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,html:/^ *(?:comment|closed|closing) *(?:\n{2,}|\s*$)/,def:/^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,table:noop,paragraph:/^((?:[^\n]+\n?(?!hr|heading|lheading|blockquote|tag|def))+)\n*/,text:/^[^\n]+/};block.bullet=/(?:[*+-]|\d+\.)/;block.item=/^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/;block.item=replace(block.item,"gm")(/bull/g,block.bullet)();block.list=replace(block.list)(/bull/g,block.bullet)("hr","\\n+(?=\\1?(?:[-*_] *){3,}(?:\\n+|$))")("def","\\n+(?="+block.def.source+")")();block.blockquote=replace(block.blockquote)("def",block.def)();block._tag="(?!(?:"+"a|em|strong|small|s|cite|q|dfn|abbr|data|time|code"+"|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo"+"|span|br|wbr|ins|del|img)\\b)\\w+(?!:/|[^\\w\\s@]*@)\\b";block.html=replace(block.html)("comment",/<!--[\s\S]*?-->/)("closed",/<(tag)[\s\S]+?<\/\1>/)("closing",/<tag(?:"[^"]*"|'[^']*'|[^'">])*?>/)(/tag/g,block._tag)();block.paragraph=replace(block.paragraph)("hr",block.hr)("heading",block.heading)("lheading",block.lheading)("blockquote",block.blockquote)("tag","<"+block._tag)("def",block.def)();block.normal=merge({},block);block.gfm=merge({},block.normal,{fences:/^ *(`{3,}|~{3,}) *(\S+)? *\n([\s\S]+?)\s*\1 *(?:\n+|$)/,paragraph:/^/});block.gfm.paragraph=replace(block.paragraph)("(?!","(?!"+block.gfm.fences.source.replace("\\1","\\2")+"|"+block.list.source.replace("\\1","\\3")+"|")();block.tables=merge({},block.gfm,{nptable:/^ *(\S.*\|.*)\n *([-:]+ *\|[-| :]*)\n((?:.*\|.*(?:\n|$))*)\n*/,table:/^ *\|(.+)\n *\|( *[-:]+[-| :]*)\n((?: *\|.*(?:\n|$))*)\n*/});function Lexer(options){this.tokens=[];this.tokens.links={};this.options=options||marked.defaults;this.rules=block.normal;if(this.options.gfm){if(this.options.tables){this.rules=block.tables}else{this.rules=block.gfm}}}Lexer.rules=block;Lexer.lex=function(src,options){var lexer=new Lexer(options);return lexer.lex(src)};Lexer.prototype.lex=function(src){src=src.replace(/\r\n|\r/g,"\n").replace(/\t/g,"    ").replace(/\u00a0/g," ").replace(/\u2424/g,"\n");return this.token(src,true)};Lexer.prototype.token=function(src,top,bq){var src=src.replace(/^ +$/gm,""),next,loose,cap,bull,b,item,space,i,l;while(src){if(cap=this.rules.newline.exec(src)){src=src.substring(cap[0].length);if(cap[0].length>1){this.tokens.push({type:"space"})}}if(cap=this.rules.code.exec(src)){src=src.substring(cap[0].length);cap=cap[0].replace(/^ {4}/gm,"");this.tokens.push({type:"code",text:!this.options.pedantic?cap.replace(/\n+$/,""):cap});continue}if(cap=this.rules.fences.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"code",lang:cap[2],text:cap[3]});continue}if(cap=this.rules.heading.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"heading",depth:cap[1].length,text:cap[2]});continue}if(top&&(cap=this.rules.nptable.exec(src))){src=src.substring(cap[0].length);item={type:"table",header:cap[1].replace(/^ *| *\| *$/g,"").split(/ *\| */),align:cap[2].replace(/^ *|\| *$/g,"").split(/ *\| */),cells:cap[3].replace(/\n$/,"").split("\n")};for(i=0;i<item.align.length;i++){if(/^ *-+: *$/.test(item.align[i])){item.align[i]="right"}else if(/^ *:-+: *$/.test(item.align[i])){item.align[i]="center"}else if(/^ *:-+ *$/.test(item.align[i])){item.align[i]="left"}else{item.align[i]=null}}for(i=0;i<item.cells.length;i++){item.cells[i]=item.cells[i].split(/ *\| */)}this.tokens.push(item);continue}if(cap=this.rules.lheading.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"heading",depth:cap[2]==="="?1:2,text:cap[1]});continue}if(cap=this.rules.hr.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"hr"});continue}if(cap=this.rules.blockquote.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"blockquote_start"});cap=cap[0].replace(/^ *> ?/gm,"");this.token(cap,top,true);this.tokens.push({type:"blockquote_end"});continue}if(cap=this.rules.list.exec(src)){src=src.substring(cap[0].length);bull=cap[2];this.tokens.push({type:"list_start",ordered:bull.length>1});cap=cap[0].match(this.rules.item);next=false;l=cap.length;i=0;for(;i<l;i++){item=cap[i];space=item.length;item=item.replace(/^ *([*+-]|\d+\.) +/,"");if(~item.indexOf("\n ")){space-=item.length;item=!this.options.pedantic?item.replace(new RegExp("^ {1,"+space+"}","gm"),""):item.replace(/^ {1,4}/gm,"")}if(this.options.smartLists&&i!==l-1){b=block.bullet.exec(cap[i+1])[0];if(bull!==b&&!(bull.length>1&&b.length>1)){src=cap.slice(i+1).join("\n")+src;i=l-1}}loose=next||/\n\n(?!\s*$)/.test(item);if(i!==l-1){next=item.charAt(item.length-1)==="\n";if(!loose)loose=next}this.tokens.push({type:loose?"loose_item_start":"list_item_start"});this.token(item,false,bq);this.tokens.push({type:"list_item_end"})}this.tokens.push({type:"list_end"});continue}if(cap=this.rules.html.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:this.options.sanitize?"paragraph":"html",pre:cap[1]==="pre"||cap[1]==="script"||cap[1]==="style",text:cap[0]});continue}if(!bq&&top&&(cap=this.rules.def.exec(src))){src=src.substring(cap[0].length);this.tokens.links[cap[1].toLowerCase()]={href:cap[2],title:cap[3]};continue}if(top&&(cap=this.rules.table.exec(src))){src=src.substring(cap[0].length);item={type:"table",header:cap[1].replace(/^ *| *\| *$/g,"").split(/ *\| */),align:cap[2].replace(/^ *|\| *$/g,"").split(/ *\| */),cells:cap[3].replace(/(?: *\| *)?\n$/,"").split("\n")};for(i=0;i<item.align.length;i++){if(/^ *-+: *$/.test(item.align[i])){item.align[i]="right"}else if(/^ *:-+: *$/.test(item.align[i])){item.align[i]="center"}else if(/^ *:-+ *$/.test(item.align[i])){item.align[i]="left"}else{item.align[i]=null}}for(i=0;i<item.cells.length;i++){item.cells[i]=item.cells[i].replace(/^ *\| *| *\| *$/g,"").split(/ *\| */)}this.tokens.push(item);continue}if(top&&(cap=this.rules.paragraph.exec(src))){src=src.substring(cap[0].length);this.tokens.push({type:"paragraph",text:cap[1].charAt(cap[1].length-1)==="\n"?cap[1].slice(0,-1):cap[1]});continue}if(cap=this.rules.text.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"text",text:cap[0]});continue}if(src){throw new Error("Infinite loop on byte: "+src.charCodeAt(0))}}return this.tokens};var inline={escape:/^\\([\\`*{}\[\]()#+\-.!_>])/,autolink:/^<([^ >]+(@|:\/)[^ >]+)>/,url:noop,tag:/^<!--[\s\S]*?-->|^<\/?\w+(?:"[^"]*"|'[^']*'|[^'">])*?>/,link:/^!?\[(inside)\]\(href\)/,reflink:/^!?\[(inside)\]\s*\[([^\]]*)\]/,nolink:/^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,strong:/^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,em:/^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,code:/^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,br:/^ {2,}\n(?!\s*$)/,del:noop,text:/^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/};inline._inside=/(?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*/;inline._href=/\s*<?([\s\S]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*/;inline.link=replace(inline.link)("inside",inline._inside)("href",inline._href)();inline.reflink=replace(inline.reflink)("inside",inline._inside)();inline.normal=merge({},inline);inline.pedantic=merge({},inline.normal,{strong:/^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,em:/^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/});inline.gfm=merge({},inline.normal,{escape:replace(inline.escape)("])","~|])")(),url:/^(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/,del:/^~~(?=\S)([\s\S]*?\S)~~/,text:replace(inline.text)("]|","~]|")("|","|https?://|")()});inline.breaks=merge({},inline.gfm,{br:replace(inline.br)("{2,}","*")(),text:replace(inline.gfm.text)("{2,}","*")()});function InlineLexer(links,options){this.options=options||marked.defaults;this.links=links;this.rules=inline.normal;this.renderer=this.options.renderer||new Renderer;this.renderer.options=this.options;if(!this.links){throw new Error("Tokens array requires a `links` property.")}if(this.options.gfm){if(this.options.breaks){this.rules=inline.breaks}else{this.rules=inline.gfm}}else if(this.options.pedantic){this.rules=inline.pedantic}}InlineLexer.rules=inline;InlineLexer.output=function(src,links,options){var inline=new InlineLexer(links,options);return inline.output(src)};InlineLexer.prototype.output=function(src){var out="",link,text,href,cap;while(src){if(cap=this.rules.escape.exec(src)){src=src.substring(cap[0].length);out+=cap[1];continue}if(cap=this.rules.autolink.exec(src)){src=src.substring(cap[0].length);if(cap[2]==="@"){text=cap[1].charAt(6)===":"?this.mangle(cap[1].substring(7)):this.mangle(cap[1]);href=this.mangle("mailto:")+text}else{text=escape(cap[1]);href=text}out+=this.renderer.link(href,null,text);continue}if(!this.inLink&&(cap=this.rules.url.exec(src))){src=src.substring(cap[0].length);text=escape(cap[1]);href=text;out+=this.renderer.link(href,null,text);continue}if(cap=this.rules.tag.exec(src)){if(!this.inLink&&/^<a /i.test(cap[0])){this.inLink=true}else if(this.inLink&&/^<\/a>/i.test(cap[0])){this.inLink=false}src=src.substring(cap[0].length);out+=this.options.sanitize?escape(cap[0]):cap[0];continue}if(cap=this.rules.link.exec(src)){src=src.substring(cap[0].length);this.inLink=true;out+=this.outputLink(cap,{href:cap[2],title:cap[3]});this.inLink=false;continue}if((cap=this.rules.reflink.exec(src))||(cap=this.rules.nolink.exec(src))){src=src.substring(cap[0].length);link=(cap[2]||cap[1]).replace(/\s+/g," ");link=this.links[link.toLowerCase()];if(!link||!link.href){out+=cap[0].charAt(0);src=cap[0].substring(1)+src;continue}this.inLink=true;out+=this.outputLink(cap,link);this.inLink=false;continue}if(cap=this.rules.strong.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.strong(this.output(cap[2]||cap[1]));continue}if(cap=this.rules.em.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.em(this.output(cap[2]||cap[1]));continue}if(cap=this.rules.code.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.codespan(escape(cap[2],true));continue}if(cap=this.rules.br.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.br();continue}if(cap=this.rules.del.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.del(this.output(cap[1]));continue}if(cap=this.rules.text.exec(src)){src=src.substring(cap[0].length);out+=escape(this.smartypants(cap[0]));continue}if(src){throw new Error("Infinite loop on byte: "+src.charCodeAt(0))}}return out};InlineLexer.prototype.outputLink=function(cap,link){var href=escape(link.href),title=link.title?escape(link.title):null;return cap[0].charAt(0)!=="!"?this.renderer.link(href,title,this.output(cap[1])):this.renderer.image(href,title,escape(cap[1]))};InlineLexer.prototype.smartypants=function(text){if(!this.options.smartypants)return text;return text.replace(/--/g,"—").replace(/(^|[-\u2014/(\[{"\s])'/g,"$1‘").replace(/'/g,"’").replace(/(^|[-\u2014/(\[{\u2018\s])"/g,"$1“").replace(/"/g,"”").replace(/\.{3}/g,"…")};InlineLexer.prototype.mangle=function(text){var out="",l=text.length,i=0,ch;for(;i<l;i++){ch=text.charCodeAt(i);if(Math.random()>.5){ch="x"+ch.toString(16)}out+="&#"+ch+";"}return out};function Renderer(options){this.options=options||{}}Renderer.prototype.code=function(code,lang,escaped){if(this.options.highlight){var out=this.options.highlight(code,lang);if(out!=null&&out!==code){escaped=true;code=out}}if(!lang){return"<pre><code>"+(escaped?code:escape(code,true))+"\n</code></pre>"}return'<pre><code class="'+this.options.langPrefix+escape(lang,true)+'">'+(escaped?code:escape(code,true))+"\n</code></pre>\n"};Renderer.prototype.blockquote=function(quote){return"<blockquote>\n"+quote+"</blockquote>\n"};Renderer.prototype.html=function(html){return html};Renderer.prototype.heading=function(text,level,raw){return"<h"+level+' id="'+this.options.headerPrefix+raw.toLowerCase().replace(/[^\w]+/g,"-")+'">'+text+"</h"+level+">\n"};Renderer.prototype.hr=function(){return this.options.xhtml?"<hr/>\n":"<hr>\n"};Renderer.prototype.list=function(body,ordered){var type=ordered?"ol":"ul";return"<"+type+">\n"+body+"</"+type+">\n"};Renderer.prototype.listitem=function(text){return"<li>"+text+"</li>\n"};Renderer.prototype.paragraph=function(text){return"<p>"+text+"</p>\n"};Renderer.prototype.table=function(header,body){return"<table>\n"+"<thead>\n"+header+"</thead>\n"+"<tbody>\n"+body+"</tbody>\n"+"</table>\n"};Renderer.prototype.tablerow=function(content){return"<tr>\n"+content+"</tr>\n"};Renderer.prototype.tablecell=function(content,flags){var type=flags.header?"th":"td";var tag=flags.align?"<"+type+' style="text-align:'+flags.align+'">':"<"+type+">";return tag+content+"</"+type+">\n"};Renderer.prototype.strong=function(text){return"<strong>"+text+"</strong>"};Renderer.prototype.em=function(text){return"<em>"+text+"</em>"};Renderer.prototype.codespan=function(text){return"<code>"+text+"</code>"};Renderer.prototype.br=function(){return this.options.xhtml?"<br/>":"<br>"};Renderer.prototype.del=function(text){return"<del>"+text+"</del>"};Renderer.prototype.link=function(href,title,text){if(this.options.sanitize){try{var prot=decodeURIComponent(unescape(href)).replace(/[^\w:]/g,"").toLowerCase()}catch(e){return""}if(prot.indexOf("javascript:")===0){return""}}var out='<a href="'+href+'"';if(title){out+=' title="'+title+'"'}out+=">"+text+"</a>";return out};Renderer.prototype.image=function(href,title,text){var out='<img src="'+href+'" alt="'+text+'"';if(title){out+=' title="'+title+'"'}out+=this.options.xhtml?"/>":">";return out};function Parser(options){this.tokens=[];this.token=null;this.options=options||marked.defaults;this.options.renderer=this.options.renderer||new Renderer;this.renderer=this.options.renderer;this.renderer.options=this.options}Parser.parse=function(src,options,renderer){var parser=new Parser(options,renderer);return parser.parse(src)};Parser.prototype.parse=function(src){this.inline=new InlineLexer(src.links,this.options,this.renderer);this.tokens=src.reverse();var out="";while(this.next()){out+=this.tok()}return out};Parser.prototype.next=function(){return this.token=this.tokens.pop()};Parser.prototype.peek=function(){return this.tokens[this.tokens.length-1]||0};Parser.prototype.parseText=function(){var body=this.token.text;while(this.peek().type==="text"){body+="\n"+this.next().text}return this.inline.output(body)};Parser.prototype.tok=function(){switch(this.token.type){case"space":{return""}case"hr":{return this.renderer.hr()}case"heading":{return this.renderer.heading(this.inline.output(this.token.text),this.token.depth,this.token.text)}case"code":{return this.renderer.code(this.token.text,this.token.lang,this.token.escaped)}case"table":{var header="",body="",i,row,cell,flags,j;cell="";for(i=0;i<this.token.header.length;i++){flags={header:true,align:this.token.align[i]};cell+=this.renderer.tablecell(this.inline.output(this.token.header[i]),{header:true,align:this.token.align[i]})}header+=this.renderer.tablerow(cell);for(i=0;i<this.token.cells.length;i++){row=this.token.cells[i];cell="";for(j=0;j<row.length;j++){cell+=this.renderer.tablecell(this.inline.output(row[j]),{header:false,align:this.token.align[j]})}body+=this.renderer.tablerow(cell)}return this.renderer.table(header,body)}case"blockquote_start":{var body="";while(this.next().type!=="blockquote_end"){body+=this.tok()}return this.renderer.blockquote(body)}case"list_start":{var body="",ordered=this.token.ordered;while(this.next().type!=="list_end"){body+=this.tok()}return this.renderer.list(body,ordered)}case"list_item_start":{var body="";while(this.next().type!=="list_item_end"){body+=this.token.type==="text"?this.parseText():this.tok()}return this.renderer.listitem(body)}case"loose_item_start":{var body="";while(this.next().type!=="list_item_end"){body+=this.tok()}return this.renderer.listitem(body)}case"html":{var html=!this.token.pre&&!this.options.pedantic?this.inline.output(this.token.text):this.token.text;return this.renderer.html(html)}case"paragraph":{return this.renderer.paragraph(this.inline.output(this.token.text))}case"text":{return this.renderer.paragraph(this.parseText())}}};function escape(html,encode){return html.replace(!encode?/&(?!#?\w+;)/g:/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}function unescape(html){return html.replace(/&([#\w]+);/g,function(_,n){n=n.toLowerCase();if(n==="colon")return":";if(n.charAt(0)==="#"){return n.charAt(1)==="x"?String.fromCharCode(parseInt(n.substring(2),16)):String.fromCharCode(+n.substring(1))}return""})}function replace(regex,opt){regex=regex.source;opt=opt||"";return function self(name,val){if(!name)return new RegExp(regex,opt);val=val.source||val;val=val.replace(/(^|[^\[])\^/g,"$1");regex=regex.replace(name,val);return self}}function noop(){}noop.exec=noop;function merge(obj){var i=1,target,key;for(;i<arguments.length;i++){target=arguments[i];for(key in target){if(Object.prototype.hasOwnProperty.call(target,key)){obj[key]=target[key]}}}return obj}function marked(src,opt,callback){if(callback||typeof opt==="function"){if(!callback){callback=opt;opt=null}opt=merge({},marked.defaults,opt||{});var highlight=opt.highlight,tokens,pending,i=0;try{tokens=Lexer.lex(src,opt)}catch(e){return callback(e)}pending=tokens.length;var done=function(err){if(err){opt.highlight=highlight;return callback(err)}var out;try{out=Parser.parse(tokens,opt)}catch(e){err=e}opt.highlight=highlight;return err?callback(err):callback(null,out)};if(!highlight||highlight.length<3){return done()}delete opt.highlight;if(!pending)return done();for(;i<tokens.length;i++){(function(token){if(token.type!=="code"){return--pending||done()}return highlight(token.text,token.lang,function(err,code){if(err)return done(err);if(code==null||code===token.text){return--pending||done()}token.text=code;token.escaped=true;--pending||done()})})(tokens[i])}return}try{if(opt)opt=merge({},marked.defaults,opt);return Parser.parse(Lexer.lex(src,opt),opt)}catch(e){e.message+="\nPlease report this to https://github.com/chjj/marked.";if((opt||marked.defaults).silent){return"<p>An error occured:</p><pre>"+escape(e.message+"",true)+"</pre>"}throw e}}marked.options=marked.setOptions=function(opt){merge(marked.defaults,opt);return marked};marked.defaults={gfm:true,tables:true,breaks:false,pedantic:false,sanitize:false,smartLists:false,silent:false,highlight:null,langPrefix:"lang-",smartypants:false,headerPrefix:"",renderer:new Renderer,xhtml:false};marked.Parser=Parser;marked.parser=Parser.parse;marked.Renderer=Renderer;marked.Lexer=Lexer;marked.lexer=Lexer.lex;marked.InlineLexer=InlineLexer;marked.inlineLexer=InlineLexer.output;marked.parse=marked;if(typeof module!=="undefined"&&typeof exports==="object"){module.exports=marked}else if(typeof define==="function"&&define.amd){define(function(){return marked})}else{this.marked=marked}}).call(function(){return this||(typeof window!=="undefined"?window:global)}());
-
-		return module.exports;
-	})();
-
-	function formatOptions(options) {
-		var toHighlight = function (code, lang) {
-			if (!lang && options.defaultHighlighting.ctor === 'Just')
-			{
-				lang = options.defaultHighlighting._0;
-			}
-			if (typeof hljs !== 'undefined'
-				&& lang
-				&& hljs.listLanguages().indexOf(lang) >= 0)
-			{
-				return hljs.highlight(lang, code, true).value;
-			}
-			return code;
-		};
-		var gfm = options.githubFlavored;
-		if (gfm.ctor === 'Just')
-		{
-			return {
-				highlight: toHighlight,
-				gfm: true,
-				tables: gfm._0.tables,
-				breaks: gfm._0.breaks,
-				sanitize: options.sanitize,
-				smartypants: options.smartypants
-			};
-		}
-		else
-		{
-			return {
-				highlight: toHighlight,
-				gfm: false,
-				tables: false,
-				breaks: false,
-				sanitize: options.sanitize,
-				smartypants: options.smartypants
-			};
-		}
-	}
-
-	function toHtmlWith(options, rawMarkdown)
-	{
-		return new MarkdownWidget(options, rawMarkdown);
-	}
-
-	function MarkdownWidget(options, rawMarkdown)
-	{
-		this.options = options;
-		this.markdown = rawMarkdown;
-	}
-
-	MarkdownWidget.prototype.type = "Widget";
-
-	MarkdownWidget.prototype.init = function init()
-	{
-		var html = marked(this.markdown, formatOptions(this.options));
-		var div = document.createElement('div');
-		div.innerHTML = html;
-		return div;
-	};
-
-	MarkdownWidget.prototype.update = function update(previous, node)
-	{
-		if (this.markdown !== previous.markdown || this.options != previous.options)
-		{
-			var html = marked(this.markdown, formatOptions(this.options));
-			node.innerHTML = html;
-		}
-		return node;
-	};
-
-
-	function toElementWith(options, rawMarkdown)
-	{
-		return Element.markdown(marked(rawMarkdown, formatOptions(options)));
-	}
-
-	return Elm.Native.Markdown.values = {
-		toHtmlWith: F2(toHtmlWith),
-		toElementWith: F2(toElementWith)
-	};
-};
-Elm.Markdown = Elm.Markdown || {};
-Elm.Markdown.make = function (_elm) {
+};Elm.Sprite = Elm.Sprite || {};
+Elm.Sprite.make = function (_elm) {
    "use strict";
-   _elm.Markdown = _elm.Markdown || {};
-   if (_elm.Markdown.values) return _elm.Markdown.values;
+   _elm.Sprite = _elm.Sprite || {};
+   if (_elm.Sprite.values) return _elm.Sprite.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
-   $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
-   $Native$Markdown = Elm.Native.Markdown.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
    var _op = {};
-   var toElementWith = $Native$Markdown.toElementWith;
-   var toHtmlWith = $Native$Markdown.toHtmlWith;
-   var defaultOptions = {githubFlavored: $Maybe.Just({tables: false,breaks: false}),defaultHighlighting: $Maybe.Nothing,sanitize: false,smartypants: false};
-   var Options = F4(function (a,b,c,d) {    return {githubFlavored: a,defaultHighlighting: b,sanitize: c,smartypants: d};});
-   var toElement = function (string) {    return A2($Native$Markdown.toElementWith,defaultOptions,string);};
-   var toHtml = function (string) {    return A2($Native$Markdown.toHtmlWith,defaultOptions,string);};
-   return _elm.Markdown.values = {_op: _op
-                                 ,toHtml: toHtml
-                                 ,toElement: toElement
-                                 ,Options: Options
-                                 ,defaultOptions: defaultOptions
-                                 ,toHtmlWith: toHtmlWith
-                                 ,toElementWith: toElementWith};
+   var imgFromSpriteSheet = F2(function (spriteSheet,_p0) {
+      var _p1 = _p0;
+      return A2($Html.img,
+      _U.list([$Html$Attributes.src("empty.png")
+              ,$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: "32px"}
+                                              ,{ctor: "_Tuple2",_0: "height",_1: "32px"}
+                                              ,{ctor: "_Tuple2",_0: "background-image",_1: A2($Basics._op["++"],"url(",A2($Basics._op["++"],spriteSheet,")"))}
+                                              ,{ctor: "_Tuple2"
+                                               ,_0: "background-position"
+                                               ,_1: A2($Basics._op["++"],
+                                               "-",
+                                               A2($Basics._op["++"],
+                                               $Basics.toString(_p1._0),
+                                               A2($Basics._op["++"],"px -",A2($Basics._op["++"],$Basics.toString(_p1._1),"px"))))}]))]),
+      _U.list([]));
+   });
+   var beeFromSpriteSheet = imgFromSpriteSheet("bee4.png");
+   var northBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 0});
+   var northBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 0});
+   var southBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 32});
+   var southBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 32});
+   var eastBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 32});
+   var eastBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 96,_1: 32});
+   var westBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 0});
+   var westBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 96,_1: 0});
+   var tileFromSpriteSheet = imgFromSpriteSheet("dirtpath.png");
+   var grass1 = tileFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 0});
+   var rightDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 32});
+   var bottomLeftDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 64});
+   var grass2 = tileFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 0});
+   var dirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 32});
+   var bottomRightDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 64});
+   var bottomDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 0});
+   var leftDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 32});
+   var topLeftDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 64});
+   var topDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 96,_1: 0});
+   var topRightDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 96,_1: 32});
+   return _elm.Sprite.values = {_op: _op
+                               ,imgFromSpriteSheet: imgFromSpriteSheet
+                               ,beeFromSpriteSheet: beeFromSpriteSheet
+                               ,northBee1: northBee1
+                               ,northBee2: northBee2
+                               ,southBee1: southBee1
+                               ,southBee2: southBee2
+                               ,eastBee1: eastBee1
+                               ,eastBee2: eastBee2
+                               ,westBee1: westBee1
+                               ,westBee2: westBee2
+                               ,tileFromSpriteSheet: tileFromSpriteSheet
+                               ,grass1: grass1
+                               ,rightDirt: rightDirt
+                               ,bottomLeftDirt: bottomLeftDirt
+                               ,grass2: grass2
+                               ,dirt: dirt
+                               ,bottomRightDirt: bottomRightDirt
+                               ,bottomDirt: bottomDirt
+                               ,leftDirt: leftDirt
+                               ,topLeftDirt: topLeftDirt
+                               ,topDirt: topDirt
+                               ,topRightDirt: topRightDirt};
+};Elm.Map = Elm.Map || {};
+Elm.Map.make = function (_elm) {
+   "use strict";
+   _elm.Map = _elm.Map || {};
+   if (_elm.Map.values) return _elm.Map.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Sprite = Elm.Sprite.make(_elm);
+   var _op = {};
+   var column = function (divs) {    return A2($Html.div,_U.list([]),divs);};
+   var row = function (divs) {    return A2($Html.div,_U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "height",_1: "32px"}]))]),divs);};
+   var ScrollRight = function (a) {    return {ctor: "ScrollRight",_0: a};};
+   var ScrollLeft = function (a) {    return {ctor: "ScrollLeft",_0: a};};
+   var ScrollDown = function (a) {    return {ctor: "ScrollDown",_0: a};};
+   var ScrollUp = function (a) {    return {ctor: "ScrollUp",_0: a};};
+   var init = {top: -32,left: -32};
+   var Model = F2(function (a,b) {    return {top: a,left: b};});
+   var _p0 = {ctor: "_Tuple2",_0: 224,_1: 224};
+   var width = _p0._0;
+   var height = _p0._1;
+   var _p1 = {ctor: "_Tuple2",_0: width / 2,_1: height / 2};
+   var halfWidth = _p1._0;
+   var halfHeight = _p1._1;
+   var _p2 = {ctor: "_Tuple2",_0: 288,_1: 288};
+   var fullMapWidth = _p2._0;
+   var fullMapHeight = _p2._1;
+   var overflowWidth = fullMapWidth - width;
+   var overflowHeight = fullMapHeight - height;
+   var update = F2(function (action,model) {
+      var _p3 = action;
+      switch (_p3.ctor)
+      {case "ScrollUp": return _U.update(model,{top: A3($Basics.clamp,0 - overflowHeight,0,model.top + _p3._0)});
+         case "ScrollDown": return _U.update(model,{top: A3($Basics.clamp,0 - overflowHeight,0,model.top + _p3._0)});
+         case "ScrollLeft": return _U.update(model,{left: A3($Basics.clamp,0 - overflowWidth,0,model.left - _p3._0)});
+         default: return _U.update(model,{left: A3($Basics.clamp,0 - overflowWidth,0,model.left - _p3._0)});}
+   });
+   var fullMap = function (model) {
+      var _p4 = A2($Debug.watch,"(top, left)",{ctor: "_Tuple2",_0: model.top,_1: model.left});
+      return A2($Html.div,
+      _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: A2($Basics._op["++"],$Basics.toString(fullMapWidth),"px")}
+                                              ,{ctor: "_Tuple2",_0: "height",_1: A2($Basics._op["++"],$Basics.toString(fullMapHeight),"px")}
+                                              ,{ctor: "_Tuple2",_0: "position",_1: "relative"}
+                                              ,{ctor: "_Tuple2",_0: "top",_1: A2($Basics._op["++"],$Basics.toString(model.top),"px")}
+                                              ,{ctor: "_Tuple2",_0: "left",_1: A2($Basics._op["++"],$Basics.toString(model.left),"px")}]))]),
+      _U.list([column(_U.list([row(_U.list([$Sprite.grass1
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass1]))
+                              ,row(_U.list([$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass1]))
+                              ,row(_U.list([$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass2]))
+                              ,row(_U.list([$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass1]))
+                              ,row(_U.list([$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass2]))
+                              ,row(_U.list([$Sprite.grass2
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass1]))
+                              ,row(_U.list([$Sprite.grass1
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt]))
+                              ,row(_U.list([$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass2]))
+                              ,row(_U.list([$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.topDirt
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2]))]))]));
+   };
+   var view = function (model) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: A2($Basics._op["++"],$Basics.toString(width),"px")}
+                                              ,{ctor: "_Tuple2",_0: "height",_1: A2($Basics._op["++"],$Basics.toString(height),"px")}
+                                              ,{ctor: "_Tuple2",_0: "overflow",_1: "hidden"}
+                                              ,{ctor: "_Tuple2",_0: "border",_1: "2px solid black"}]))]),
+      _U.list([fullMap(model)]));
+   };
+   return _elm.Map.values = {_op: _op
+                            ,fullMapHeight: fullMapHeight
+                            ,fullMapWidth: fullMapWidth
+                            ,height: height
+                            ,width: width
+                            ,halfHeight: halfHeight
+                            ,halfWidth: halfWidth
+                            ,overflowWidth: overflowWidth
+                            ,overflowHeight: overflowHeight
+                            ,Model: Model
+                            ,init: init
+                            ,ScrollUp: ScrollUp
+                            ,ScrollDown: ScrollDown
+                            ,ScrollLeft: ScrollLeft
+                            ,ScrollRight: ScrollRight
+                            ,update: update
+                            ,row: row
+                            ,column: column
+                            ,fullMap: fullMap
+                            ,view: view};
 };Elm.Main = Elm.Main || {};
 Elm.Main.make = function (_elm) {
    "use strict";
@@ -10727,9 +10819,11 @@ Elm.Main.make = function (_elm) {
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $Keyboard = Elm.Keyboard.make(_elm),
    $List = Elm.List.make(_elm),
+   $Map = Elm.Map.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $Sprite = Elm.Sprite.make(_elm),
    $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
    var _op = {};
@@ -10737,189 +10831,119 @@ Elm.Main.make = function (_elm) {
    var input = A2($Signal.sampleOn,
    delta,
    A4($Signal.map3,F3(function (v0,v1,v2) {    return {ctor: "_Tuple3",_0: v0,_1: v1,_2: v2};}),delta,$Keyboard.arrows,$Keyboard.shift));
-   var imgFromSpriteSheet = function (_p0) {
+   var viewBee = function (_p0) {
       var _p1 = _p0;
-      return A2($Html.img,
-      _U.list([$Html$Attributes.src("empty.png")
-              ,$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: "32px"}
-                                              ,{ctor: "_Tuple2",_0: "height",_1: "32px"}
-                                              ,{ctor: "_Tuple2",_0: "background-image",_1: "url(dirtpath.png)"}
-                                              ,{ctor: "_Tuple2"
-                                               ,_0: "background-position"
-                                               ,_1: A2($Basics._op["++"],
-                                               "-",
-                                               A2($Basics._op["++"],
-                                               $Basics.toString(_p1._0),
-                                               A2($Basics._op["++"],"px -",A2($Basics._op["++"],$Basics.toString(_p1._1),"px"))))}]))]),
-      _U.list([]));
-   };
-   var grass1 = imgFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 0});
-   var rightDirt = imgFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 32});
-   var bottomLeftDirt = imgFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 64});
-   var grass2 = imgFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 0});
-   var dirt = imgFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 32});
-   var bottomRightDirt = imgFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 64});
-   var bottomDirt = imgFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 0});
-   var leftDirt = imgFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 32});
-   var topLeftDirt = imgFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 64});
-   var topDirt = imgFromSpriteSheet({ctor: "_Tuple2",_0: 96,_1: 0});
-   var topRightDirt = imgFromSpriteSheet({ctor: "_Tuple2",_0: 96,_1: 32});
-   var column = function (divs) {    return A2($Html.div,_U.list([]),divs);};
-   var row = function (divs) {    return A2($Html.div,_U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "height",_1: "32px"}]))]),divs);};
-   var _p2 = {ctor: "_Tuple2",_0: 160,_1: 160};
-   var mapWidth = _p2._0;
-   var mapHeight = _p2._1;
-   var _p3 = {ctor: "_Tuple2",_0: mapWidth / 2,_1: mapHeight / 2};
-   var halfMapWidth = _p3._0;
-   var halfMapHeight = _p3._1;
-   var map = A2($Html.div,
-   _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: A2($Basics._op["++"],$Basics.toString(mapWidth),"px")}
-                                           ,{ctor: "_Tuple2",_0: "height",_1: A2($Basics._op["++"],$Basics.toString(mapHeight),"px")}]))]),
-   _U.list([column(_U.list([row(_U.list([grass1,grass2,rightDirt,dirt,leftDirt]))
-                           ,row(_U.list([dirt,dirt,dirt,dirt,leftDirt]))
-                           ,row(_U.list([grass2,grass1,rightDirt,dirt,leftDirt]))
-                           ,row(_U.list([grass1,grass2,rightDirt,dirt,leftDirt]))
-                           ,row(_U.list([grass2,grass1,rightDirt,dirt,leftDirt]))]))]));
-   var beeFromSpriteSheet = function (_p4) {
-      var _p5 = _p4;
-      return A2($Html.img,
-      _U.list([$Html$Attributes.src("empty.png")
-              ,$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: "32px"}
-                                              ,{ctor: "_Tuple2",_0: "height",_1: "32px"}
-                                              ,{ctor: "_Tuple2"
-                                               ,_0: "background"
-                                               ,_1: A2($Basics._op["++"],
-                                               "url(bee4.png) ",
-                                               A2($Basics._op["++"],
-                                               $Basics.toString(_p5._0),
-                                               A2($Basics._op["++"],"px ",A2($Basics._op["++"],$Basics.toString(_p5._1),"px"))))}]))]),
-      _U.list([]));
-   };
-   var northBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 0});
-   var northBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 0});
-   var southBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 32});
-   var southBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 32});
-   var eastBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 32});
-   var eastBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 96,_1: 32});
-   var westBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 0});
-   var westBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 96,_1: 0});
-   var view = F2(function (_p7,_p6) {
-      var _p8 = _p7;
-      var _p9 = _p6;
-      var inner = $Html.div(_U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "display",_1: "table-cell"}
-                                                                    ,{ctor: "_Tuple2",_0: "vertical-align",_1: "middle"}]))]));
-      var middle = $Html.div(_U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "display",_1: "table-cell"}
-                                                                     ,{ctor: "_Tuple2",_0: "vertical-align",_1: "middle"}]))]));
-      var outer = $Html.div(_U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "display",_1: "table"}
-                                                                    ,{ctor: "_Tuple2",_0: "position",_1: "absolute"}
-                                                                    ,{ctor: "_Tuple2",_0: "height",_1: "100%"}
-                                                                    ,{ctor: "_Tuple2",_0: "width",_1: "100%"}]))]));
       var beeImage = function () {
-         var _p10 = {ctor: "_Tuple2",_0: _p9.dir,_1: _p9.sprite};
-         _v4_8: do {
-            switch (_p10._1)
-            {case 0: switch (_p10._0)
-                 {case "north": return northBee1;
-                    case "south": return southBee1;
-                    case "east": return eastBee1;
-                    case "west": return westBee1;
-                    default: break _v4_8;}
-               case 1: switch (_p10._0)
-                 {case "north": return northBee2;
-                    case "south": return southBee2;
-                    case "east": return eastBee2;
-                    case "west": return westBee2;
-                    default: break _v4_8;}
-               default: break _v4_8;}
+         var _p2 = {ctor: "_Tuple2",_0: _p1.dir,_1: _p1.sprite};
+         _v1_8: do {
+            switch (_p2._1)
+            {case 0: switch (_p2._0)
+                 {case "north": return $Sprite.northBee1;
+                    case "south": return $Sprite.southBee1;
+                    case "east": return $Sprite.eastBee1;
+                    case "west": return $Sprite.westBee1;
+                    default: break _v1_8;}
+               case 1: switch (_p2._0)
+                 {case "north": return $Sprite.northBee2;
+                    case "south": return $Sprite.southBee2;
+                    case "east": return $Sprite.eastBee2;
+                    case "west": return $Sprite.westBee2;
+                    default: break _v1_8;}
+               default: break _v1_8;}
          } while (false);
-         return northBee1;
+         return $Sprite.northBee1;
       }();
-      var bee = A2($Html.div,
+      return A2($Html.div,
       _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: "32px"}
                                               ,{ctor: "_Tuple2",_0: "height",_1: "32px"}
                                               ,{ctor: "_Tuple2",_0: "position",_1: "relative"}
-                                              ,{ctor: "_Tuple2"
-                                               ,_0: "top"
-                                               ,_1: A2($Basics._op["++"],"-",A2($Basics._op["++"],A2($Debug.watch,"top",$Basics.toString(_p9.y)),"px"))}
-                                              ,{ctor: "_Tuple2",_0: "left",_1: A2($Basics._op["++"],$Basics.toString(_p9.x),"px")}]))]),
+                                              ,{ctor: "_Tuple2",_0: "top",_1: A2($Basics._op["++"],"-",A2($Basics._op["++"],$Basics.toString(_p1.y),"px"))}
+                                              ,{ctor: "_Tuple2",_0: "left",_1: A2($Basics._op["++"],$Basics.toString(_p1.x),"px")}]))]),
       _U.list([beeImage]));
-      return A2($Html.div,
-      _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: A2($Basics._op["++"],$Basics.toString(mapWidth),"px")}
-                                              ,{ctor: "_Tuple2",_0: "height",_1: A2($Basics._op["++"],$Basics.toString(mapHeight),"px")}
-                                              ,{ctor: "_Tuple2",_0: "margin",_1: "auto"}]))]),
-      _U.list([map,bee]));
+   };
+   var view = F2(function (_p4,_p3) {
+      var _p5 = _p4;
+      var _p6 = _p3;
+      var _p7 = _p6;
+      var bee = viewBee(_p7);
+      var inner = A2($Html.div,
+      _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "margin-left",_1: "auto"}
+                                              ,{ctor: "_Tuple2",_0: "margin-right",_1: "auto"}
+                                              ,{ctor: "_Tuple2",_0: "width",_1: A2($Basics._op["++"],$Basics.toString($Map.width),"px")}]))]),
+      _U.list([$Map.view(_p7.map),bee]));
+      var middle = A2($Html.div,
+      _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "display",_1: "table-cell"},{ctor: "_Tuple2",_0: "vertical-align",_1: "middle"}]))]),
+      _U.list([inner]));
+      var outer = A2($Html.div,
+      _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "display",_1: "table"}
+                                              ,{ctor: "_Tuple2",_0: "position",_1: "absolute"}
+                                              ,{ctor: "_Tuple2",_0: "height",_1: "100%"}
+                                              ,{ctor: "_Tuple2",_0: "width",_1: "100%"}]))]),
+      _U.list([middle]));
+      return outer;
    });
-   var setDirection = F2(function (_p11,model) {
-      var _p12 = _p11;
-      var _p14 = _p12.y;
-      var _p13 = _p12.x;
+   var updateMap = F2(function (dt,_p8) {
+      var _p9 = _p8;
+      var _p15 = _p9.y;
+      var _p14 = _p9.x;
+      var _p13 = _p9.vy;
+      var _p12 = _p9.vx;
+      var _p10 = A2($Debug.watch,"(x+32,y)",{ctor: "_Tuple2",_0: _p14 + 32,_1: _p15});
+      var movingLeft = _U.cmp(_p12,0) < 0;
+      var movingRight = _U.cmp(_p12,0) > 0;
+      var movingDown = _U.cmp(_p13,0) < 0;
+      var movingUp = _U.cmp(_p13,0) > 0;
+      var _p11 = A2($Debug.watch,"(mUp,mDown,mLeft,mRight)",{ctor: "_Tuple4",_0: movingUp,_1: movingDown,_2: movingLeft,_3: movingRight});
+      var top = $Map.height;
+      var right = $Map.width;
+      var left = 0;
+      var bottom = 0;
+      var action = _U.eq(_p14,left) && movingLeft ? $Map.ScrollLeft($Basics.round(dt * _p12)) : _U.eq(_p14 + 32,
+      right) && movingRight ? $Map.ScrollRight($Basics.round(dt * _p12)) : _U.eq(_p15,
+      top) && movingUp ? $Map.ScrollUp($Basics.round(dt * _p13)) : _U.eq(_p15 - 32,
+      bottom) && movingDown ? $Map.ScrollDown($Basics.round(dt * _p13)) : $Map.ScrollLeft(0);
+      return _U.update(_p9,{map: A2($Map.update,A2($Debug.watch,"action",action),_p9.map)});
+   });
+   var updatePosition = F2(function (dt,_p16) {
+      var _p17 = _p16;
+      return _U.update(_p17,{x: A3($Basics.clamp,0,$Map.width - 32,_p17.x + dt * _p17.vx),y: A3($Basics.clamp,32,$Map.height,_p17.y + dt * _p17.vy)});
+   });
+   var setDirection = F2(function (_p18,model) {
+      var _p19 = _p18;
+      var _p21 = _p19.y;
+      var _p20 = _p19.x;
       return _U.update(model,
-      {dir: _U.cmp(_p13,0) > 0 ? "east" : _U.cmp(_p13,0) < 0 ? "west" : _U.cmp(_p14,0) < 0 ? "south" : _U.cmp(_p14,0) > 0 ? "north" : model.dir});
+      {dir: _U.cmp(_p20,0) > 0 ? "east" : _U.cmp(_p20,0) < 0 ? "west" : _U.cmp(_p21,0) < 0 ? "south" : _U.cmp(_p21,0) > 0 ? "north" : model.dir});
    });
-   var newVelocity = F3(function (isRunning,_p15,model) {
-      var _p16 = _p15;
-      var _p18 = _p16.y;
-      var _p17 = _p16.x;
+   var newVelocity = F3(function (isRunning,_p22,model) {
+      var _p23 = _p22;
+      var _p25 = _p23.y;
+      var _p24 = _p23.x;
       var scale = isRunning ? 2 : 1;
-      var newVel = function (n) {    return _U.eq(_p17,0) || _U.eq(_p18,0) ? scale * $Basics.toFloat(n) : scale * $Basics.toFloat(n) / $Basics.sqrt(2);};
-      return _U.update(model,{vx: newVel(_p17),vy: newVel(_p18)});
+      var newVel = function (n) {    return _U.eq(_p24,0) || _U.eq(_p25,0) ? scale * $Basics.toFloat(n) : scale * $Basics.toFloat(n) / $Basics.sqrt(2);};
+      return _U.update(model,{vx: newVel(_p24),vy: newVel(_p25)});
    });
-   var updateSprite = function (_p19) {    var _p20 = _p19;var newSprite = _U.eq(_p20.sprite,0) ? 1 : 0;return _U.update(_p20,{sprite: newSprite});};
-   var Model = F6(function (a,b,c,d,e,f) {    return {x: a,y: b,vx: c,vy: d,dir: e,sprite: f};});
-   var hero = A6(Model,0,0,0,0,"south",0);
-   var areaH = 301;
-   var areaW = 407;
-   var updatePosition = F2(function (dt,_p21) {
-      var _p22 = _p21;
-      return _U.update(_p22,
-      {x: A3($Basics.clamp,(0 - areaW) / 2,areaW / 2,_p22.x + dt * _p22.vx)
-      ,y: A3($Basics.clamp,A2($Debug.watch,"minH",0 - areaH) / 2,A2($Debug.watch,"maxH",areaH) / 2,A2($Debug.watch,"height",_p22.y + dt * _p22.vy))});
+   var updateSprite = function (_p26) {    var _p27 = _p26;var newSprite = _U.eq(_p27.sprite,0) ? 1 : 0;return _U.update(_p27,{sprite: newSprite});};
+   var update = F2(function (_p28,model) {
+      var _p29 = _p28;
+      var _p31 = _p29._0;
+      var _p30 = _p29._1;
+      return updateSprite(A2(updateMap,_p31,A2(updatePosition,_p31,A2(setDirection,_p30,A3(newVelocity,_p29._2,_p30,model)))));
    });
-   var update = F2(function (_p23,model) {
-      var _p24 = _p23;
-      var _p25 = _p24._1;
-      return updateSprite(A2(updatePosition,_p24._0,A2(setDirection,_p25,A3(newVelocity,_p24._2,_p25,model))));
-   });
-   var main = A3($Signal.map2,view,$Window.dimensions,A3($Signal.foldp,update,hero,input));
+   var Model = F7(function (a,b,c,d,e,f,g) {    return {x: a,y: b,vx: c,vy: d,dir: e,sprite: f,map: g};});
+   var initialModel = A7(Model,$Map.halfWidth,$Map.halfHeight,0,0,"north",0,$Map.init);
+   var main = A3($Signal.map2,view,$Window.dimensions,A3($Signal.foldp,update,initialModel,input));
    return _elm.Main.values = {_op: _op
-                             ,areaW: areaW
-                             ,areaH: areaH
                              ,Model: Model
-                             ,hero: hero
+                             ,initialModel: initialModel
                              ,update: update
                              ,updateSprite: updateSprite
                              ,newVelocity: newVelocity
                              ,setDirection: setDirection
                              ,updatePosition: updatePosition
-                             ,beeFromSpriteSheet: beeFromSpriteSheet
-                             ,northBee1: northBee1
-                             ,northBee2: northBee2
-                             ,southBee1: southBee1
-                             ,southBee2: southBee2
-                             ,eastBee1: eastBee1
-                             ,eastBee2: eastBee2
-                             ,westBee1: westBee1
-                             ,westBee2: westBee2
+                             ,updateMap: updateMap
                              ,view: view
-                             ,mapHeight: mapHeight
-                             ,mapWidth: mapWidth
-                             ,halfMapHeight: halfMapHeight
-                             ,halfMapWidth: halfMapWidth
-                             ,row: row
-                             ,column: column
-                             ,map: map
-                             ,imgFromSpriteSheet: imgFromSpriteSheet
-                             ,grass1: grass1
-                             ,rightDirt: rightDirt
-                             ,bottomLeftDirt: bottomLeftDirt
-                             ,grass2: grass2
-                             ,dirt: dirt
-                             ,bottomRightDirt: bottomRightDirt
-                             ,bottomDirt: bottomDirt
-                             ,leftDirt: leftDirt
-                             ,topLeftDirt: topLeftDirt
-                             ,topDirt: topDirt
-                             ,topRightDirt: topRightDirt
+                             ,viewBee: viewBee
                              ,main: main
                              ,input: input
                              ,delta: delta};

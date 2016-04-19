@@ -17,12 +17,13 @@ type alias Model =
   , vy : Float
   , dir : String
   , sprite : Int
+  , map : Map.Model
   }
 
 
-hero : Model
-hero =
-  Model 0 0 0 0 "north" 0
+initialModel : Model
+initialModel =
+  Model halfWidth halfHeight 0 0 "north" 0 Map.init
 
 
 -- UPDATE
@@ -33,6 +34,7 @@ update (timeDelta, direction, isRunning) model =
     |> newVelocity isRunning direction
     |> setDirection direction
     |> updatePosition timeDelta
+    |> updateMap timeDelta
     |> updateSprite
 
 
@@ -85,9 +87,40 @@ setDirection {x,y} model =
 updatePosition : Time -> Model -> Model
 updatePosition dt ({x,y,vx,vy} as model) =
   { model |
-      x = clamp 0 (mapWidth-32) (x + dt * vx),
-      y = clamp 32 mapHeight (y + dt * vy)
+      x = clamp 0 (Map.width-32) (x + dt * vx),
+      y = clamp 32 Map.height (y + dt * vy)
   }
+
+updateMap : Time -> Model -> Model
+updateMap dt ({x,y,vx,vy,map} as model) =
+   let bottom = 0
+       left = 0
+       right = Map.width 
+       top = Map.height 
+       movingUp = vy > 0
+       movingDown = vy < 0
+       movingRight = vx > 0
+       movingLeft = vx < 0
+       _ = Debug.watch "(x+32,y)" (x+32,y)
+       -- _ = Debug.watch "(top,bottom,left,right)" (top,bottom,left,right)
+       _ = Debug.watch "(mUp,mDown,mLeft,mRight)" (movingUp, movingDown, movingLeft, movingRight)
+       action : Map.Action
+       action =
+         if x == left && movingLeft then
+            Map.ScrollLeft (round (dt*vx))
+         else if (x+32) == right && movingRight then
+            Map.ScrollRight (round (dt*vx))
+         else if y == top && movingUp then
+            Map.ScrollUp (round (dt*vy))
+         else if (y-32) == bottom && movingDown then
+            Map.ScrollDown (round (dt*vy))
+         else
+            Map.ScrollLeft 0
+     
+    in { model |
+          map = Map.update (Debug.watch "action" action) map
+       }
+
 
 
 -- VIEW
@@ -123,10 +156,10 @@ view (w,h) ({x,y,vx,vy,dir,sprite} as model) =
         [ style
           [ ("margin-left", "auto")
           , ("margin-right", "auto")
-          , ("width", (toString mapWidth) ++ "px")
+          , ("width", (toString Map.width) ++ "px")
           ]
         ]
-        [map, bee]
+        [Map.view model.map, bee]
   in
     outer
 
@@ -160,7 +193,7 @@ viewBee {x,y,vx,vy,dir,sprite} =
 
 main : Signal Html
 main =
-  Signal.map2 view Window.dimensions (Signal.foldp update hero input)
+  Signal.map2 view Window.dimensions (Signal.foldp update initialModel input)
 
 
 input : Signal (Time, { x:Int, y:Int }, Bool)

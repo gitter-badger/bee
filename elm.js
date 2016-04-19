@@ -10710,31 +10710,149 @@ Elm.Map.make = function (_elm) {
    var _op = {};
    var column = function (divs) {    return A2($Html.div,_U.list([]),divs);};
    var row = function (divs) {    return A2($Html.div,_U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "height",_1: "32px"}]))]),divs);};
+   var ScrollRight = function (a) {    return {ctor: "ScrollRight",_0: a};};
+   var ScrollLeft = function (a) {    return {ctor: "ScrollLeft",_0: a};};
+   var ScrollDown = function (a) {    return {ctor: "ScrollDown",_0: a};};
+   var ScrollUp = function (a) {    return {ctor: "ScrollUp",_0: a};};
+   var init = {top: -32,left: -32};
+   var Model = F2(function (a,b) {    return {top: a,left: b};});
    var _p0 = {ctor: "_Tuple2",_0: 224,_1: 224};
-   var mapWidth = _p0._0;
-   var mapHeight = _p0._1;
-   var _p1 = {ctor: "_Tuple2",_0: mapWidth / 2,_1: mapHeight / 2};
-   var halfMapWidth = _p1._0;
-   var halfMapHeight = _p1._1;
-   var map = A2($Html.div,
-   _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: A2($Basics._op["++"],$Basics.toString(mapWidth),"px")}
-                                           ,{ctor: "_Tuple2",_0: "height",_1: A2($Basics._op["++"],$Basics.toString(mapHeight),"px")}
-                                           ,{ctor: "_Tuple2",_0: "border",_1: "2px solid black"}]))]),
-   _U.list([column(_U.list([row(_U.list([$Sprite.grass1,$Sprite.grass2,$Sprite.grass1,$Sprite.grass2,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
-                           ,row(_U.list([$Sprite.dirt,$Sprite.dirt,$Sprite.dirt,$Sprite.dirt,$Sprite.dirt,$Sprite.dirt,$Sprite.leftDirt]))
-                           ,row(_U.list([$Sprite.grass2,$Sprite.grass1,$Sprite.grass2,$Sprite.grass1,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
-                           ,row(_U.list([$Sprite.grass1,$Sprite.grass2,$Sprite.grass1,$Sprite.grass2,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
-                           ,row(_U.list([$Sprite.grass2,$Sprite.grass1,$Sprite.grass2,$Sprite.grass1,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
-                           ,row(_U.list([$Sprite.grass2,$Sprite.grass1,$Sprite.grass2,$Sprite.grass1,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))
-                           ,row(_U.list([$Sprite.grass1,$Sprite.grass1,$Sprite.grass2,$Sprite.grass1,$Sprite.rightDirt,$Sprite.dirt,$Sprite.leftDirt]))]))]));
+   var width = _p0._0;
+   var height = _p0._1;
+   var _p1 = {ctor: "_Tuple2",_0: width / 2,_1: height / 2};
+   var halfWidth = _p1._0;
+   var halfHeight = _p1._1;
+   var _p2 = {ctor: "_Tuple2",_0: 288,_1: 288};
+   var fullMapWidth = _p2._0;
+   var fullMapHeight = _p2._1;
+   var overflowWidth = fullMapWidth - width;
+   var overflowHeight = fullMapHeight - height;
+   var update = F2(function (action,model) {
+      var _p3 = action;
+      switch (_p3.ctor)
+      {case "ScrollUp": return _U.update(model,{top: A3($Basics.clamp,0 - overflowHeight,0,model.top + _p3._0)});
+         case "ScrollDown": return _U.update(model,{top: A3($Basics.clamp,0 - overflowHeight,0,model.top + _p3._0)});
+         case "ScrollLeft": return _U.update(model,{left: A3($Basics.clamp,0 - overflowWidth,0,model.left - _p3._0)});
+         default: return _U.update(model,{left: A3($Basics.clamp,0 - overflowWidth,0,model.left - _p3._0)});}
+   });
+   var fullMap = function (model) {
+      var _p4 = A2($Debug.watch,"(top, left)",{ctor: "_Tuple2",_0: model.top,_1: model.left});
+      return A2($Html.div,
+      _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: A2($Basics._op["++"],$Basics.toString(fullMapWidth),"px")}
+                                              ,{ctor: "_Tuple2",_0: "height",_1: A2($Basics._op["++"],$Basics.toString(fullMapHeight),"px")}
+                                              ,{ctor: "_Tuple2",_0: "position",_1: "relative"}
+                                              ,{ctor: "_Tuple2",_0: "top",_1: A2($Basics._op["++"],$Basics.toString(model.top),"px")}
+                                              ,{ctor: "_Tuple2",_0: "left",_1: A2($Basics._op["++"],$Basics.toString(model.left),"px")}]))]),
+      _U.list([column(_U.list([row(_U.list([$Sprite.grass1
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass1]))
+                              ,row(_U.list([$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass1]))
+                              ,row(_U.list([$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass2]))
+                              ,row(_U.list([$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass1]))
+                              ,row(_U.list([$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass2]))
+                              ,row(_U.list([$Sprite.grass2
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass1]))
+                              ,row(_U.list([$Sprite.grass1
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.dirt]))
+                              ,row(_U.list([$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.rightDirt
+                                           ,$Sprite.dirt
+                                           ,$Sprite.leftDirt
+                                           ,$Sprite.grass2]))
+                              ,row(_U.list([$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2
+                                           ,$Sprite.topDirt
+                                           ,$Sprite.grass1
+                                           ,$Sprite.grass2]))]))]));
+   };
+   var view = function (model) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: A2($Basics._op["++"],$Basics.toString(width),"px")}
+                                              ,{ctor: "_Tuple2",_0: "height",_1: A2($Basics._op["++"],$Basics.toString(height),"px")}
+                                              ,{ctor: "_Tuple2",_0: "overflow",_1: "hidden"}
+                                              ,{ctor: "_Tuple2",_0: "border",_1: "2px solid black"}]))]),
+      _U.list([fullMap(model)]));
+   };
    return _elm.Map.values = {_op: _op
-                            ,mapHeight: mapHeight
-                            ,mapWidth: mapWidth
-                            ,halfMapHeight: halfMapHeight
-                            ,halfMapWidth: halfMapWidth
+                            ,fullMapHeight: fullMapHeight
+                            ,fullMapWidth: fullMapWidth
+                            ,height: height
+                            ,width: width
+                            ,halfHeight: halfHeight
+                            ,halfWidth: halfWidth
+                            ,overflowWidth: overflowWidth
+                            ,overflowHeight: overflowHeight
+                            ,Model: Model
+                            ,init: init
+                            ,ScrollUp: ScrollUp
+                            ,ScrollDown: ScrollDown
+                            ,ScrollLeft: ScrollLeft
+                            ,ScrollRight: ScrollRight
+                            ,update: update
                             ,row: row
                             ,column: column
-                            ,map: map};
+                            ,fullMap: fullMap
+                            ,view: view};
 };
 Elm.Main = Elm.Main || {};
 Elm.Main.make = function (_elm) {
@@ -10793,12 +10911,13 @@ Elm.Main.make = function (_elm) {
    var view = F2(function (_p4,_p3) {
       var _p5 = _p4;
       var _p6 = _p3;
-      var bee = viewBee(_p6);
+      var _p7 = _p6;
+      var bee = viewBee(_p7);
       var inner = A2($Html.div,
       _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "margin-left",_1: "auto"}
                                               ,{ctor: "_Tuple2",_0: "margin-right",_1: "auto"}
-                                              ,{ctor: "_Tuple2",_0: "width",_1: A2($Basics._op["++"],$Basics.toString($Map.mapWidth),"px")}]))]),
-      _U.list([$Map.map,bee]));
+                                              ,{ctor: "_Tuple2",_0: "width",_1: A2($Basics._op["++"],$Basics.toString($Map.width),"px")}]))]),
+      _U.list([$Map.view(_p7.map),bee]));
       var middle = A2($Html.div,
       _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "display",_1: "table-cell"},{ctor: "_Tuple2",_0: "vertical-align",_1: "middle"}]))]),
       _U.list([inner]));
@@ -10810,42 +10929,66 @@ Elm.Main.make = function (_elm) {
       _U.list([middle]));
       return outer;
    });
-   var updatePosition = F2(function (dt,_p7) {
-      var _p8 = _p7;
-      return _U.update(_p8,{x: A3($Basics.clamp,0,$Map.mapWidth - 32,_p8.x + dt * _p8.vx),y: A3($Basics.clamp,32,$Map.mapHeight,_p8.y + dt * _p8.vy)});
+   var updateMap = F2(function (dt,_p8) {
+      var _p9 = _p8;
+      var _p15 = _p9.y;
+      var _p14 = _p9.x;
+      var _p13 = _p9.vy;
+      var _p12 = _p9.vx;
+      var _p10 = A2($Debug.watch,"(x+32,y)",{ctor: "_Tuple2",_0: _p14 + 32,_1: _p15});
+      var movingLeft = _U.cmp(_p12,0) < 0;
+      var movingRight = _U.cmp(_p12,0) > 0;
+      var movingDown = _U.cmp(_p13,0) < 0;
+      var movingUp = _U.cmp(_p13,0) > 0;
+      var _p11 = A2($Debug.watch,"(mUp,mDown,mLeft,mRight)",{ctor: "_Tuple4",_0: movingUp,_1: movingDown,_2: movingLeft,_3: movingRight});
+      var top = $Map.height;
+      var right = $Map.width;
+      var left = 0;
+      var bottom = 0;
+      var action = _U.eq(_p14,left) && movingLeft ? $Map.ScrollLeft($Basics.round(dt * _p12)) : _U.eq(_p14 + 32,
+      right) && movingRight ? $Map.ScrollRight($Basics.round(dt * _p12)) : _U.eq(_p15,
+      top) && movingUp ? $Map.ScrollUp($Basics.round(dt * _p13)) : _U.eq(_p15 - 32,
+      bottom) && movingDown ? $Map.ScrollDown($Basics.round(dt * _p13)) : $Map.ScrollLeft(0);
+      return _U.update(_p9,{map: A2($Map.update,A2($Debug.watch,"action",action),_p9.map)});
    });
-   var setDirection = F2(function (_p9,model) {
-      var _p10 = _p9;
-      var _p12 = _p10.y;
-      var _p11 = _p10.x;
+   var updatePosition = F2(function (dt,_p16) {
+      var _p17 = _p16;
+      return _U.update(_p17,{x: A3($Basics.clamp,0,$Map.width - 32,_p17.x + dt * _p17.vx),y: A3($Basics.clamp,32,$Map.height,_p17.y + dt * _p17.vy)});
+   });
+   var setDirection = F2(function (_p18,model) {
+      var _p19 = _p18;
+      var _p21 = _p19.y;
+      var _p20 = _p19.x;
       return _U.update(model,
-      {dir: _U.cmp(_p11,0) > 0 ? "east" : _U.cmp(_p11,0) < 0 ? "west" : _U.cmp(_p12,0) < 0 ? "south" : _U.cmp(_p12,0) > 0 ? "north" : model.dir});
+      {dir: _U.cmp(_p20,0) > 0 ? "east" : _U.cmp(_p20,0) < 0 ? "west" : _U.cmp(_p21,0) < 0 ? "south" : _U.cmp(_p21,0) > 0 ? "north" : model.dir});
    });
-   var newVelocity = F3(function (isRunning,_p13,model) {
-      var _p14 = _p13;
-      var _p16 = _p14.y;
-      var _p15 = _p14.x;
+   var newVelocity = F3(function (isRunning,_p22,model) {
+      var _p23 = _p22;
+      var _p25 = _p23.y;
+      var _p24 = _p23.x;
       var scale = isRunning ? 2 : 1;
-      var newVel = function (n) {    return _U.eq(_p15,0) || _U.eq(_p16,0) ? scale * $Basics.toFloat(n) : scale * $Basics.toFloat(n) / $Basics.sqrt(2);};
-      return _U.update(model,{vx: newVel(_p15),vy: newVel(_p16)});
+      var newVel = function (n) {    return _U.eq(_p24,0) || _U.eq(_p25,0) ? scale * $Basics.toFloat(n) : scale * $Basics.toFloat(n) / $Basics.sqrt(2);};
+      return _U.update(model,{vx: newVel(_p24),vy: newVel(_p25)});
    });
-   var updateSprite = function (_p17) {    var _p18 = _p17;var newSprite = _U.eq(_p18.sprite,0) ? 1 : 0;return _U.update(_p18,{sprite: newSprite});};
-   var update = F2(function (_p19,model) {
-      var _p20 = _p19;
-      var _p21 = _p20._1;
-      return updateSprite(A2(updatePosition,_p20._0,A2(setDirection,_p21,A3(newVelocity,_p20._2,_p21,model))));
+   var updateSprite = function (_p26) {    var _p27 = _p26;var newSprite = _U.eq(_p27.sprite,0) ? 1 : 0;return _U.update(_p27,{sprite: newSprite});};
+   var update = F2(function (_p28,model) {
+      var _p29 = _p28;
+      var _p31 = _p29._0;
+      var _p30 = _p29._1;
+      return updateSprite(A2(updateMap,_p31,A2(updatePosition,_p31,A2(setDirection,_p30,A3(newVelocity,_p29._2,_p30,model)))));
    });
-   var Model = F6(function (a,b,c,d,e,f) {    return {x: a,y: b,vx: c,vy: d,dir: e,sprite: f};});
-   var hero = A6(Model,0,0,0,0,"north",0);
-   var main = A3($Signal.map2,view,$Window.dimensions,A3($Signal.foldp,update,hero,input));
+   var Model = F7(function (a,b,c,d,e,f,g) {    return {x: a,y: b,vx: c,vy: d,dir: e,sprite: f,map: g};});
+   var initialModel = A7(Model,$Map.halfWidth,$Map.halfHeight,0,0,"north",0,$Map.init);
+   var main = A3($Signal.map2,view,$Window.dimensions,A3($Signal.foldp,update,initialModel,input));
    return _elm.Main.values = {_op: _op
                              ,Model: Model
-                             ,hero: hero
+                             ,initialModel: initialModel
                              ,update: update
                              ,updateSprite: updateSprite
                              ,newVelocity: newVelocity
                              ,setDirection: setDirection
                              ,updatePosition: updatePosition
+                             ,updateMap: updateMap
                              ,view: view
                              ,viewBee: viewBee
                              ,main: main
