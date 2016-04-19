@@ -49,7 +49,7 @@ newVelocity : Bool -> { x:Int, y:Int } -> Model -> Model
 newVelocity isRunning {x,y} model =
   let
     scale =
-      if isRunning then 2 else 1
+      if isRunning then 4 else 2
 
     newVel n =
       if x == 0 || y == 0 then

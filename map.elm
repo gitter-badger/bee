@@ -38,13 +38,16 @@ update action model =
 
 -- View
 
-row : List Html -> Html
-row divs =
-   div [style [("height",  "32px")]] divs
-
-column : List Html -> Html
-column divs =
-   div [] divs
+view : Model -> Html
+view model = div
+  [ style
+      [ ("width", (toString width) ++ "px")
+      , ("height", (toString height) ++ "px")
+      , ("overflow", "hidden")
+      , ("border", "2px solid black")
+      ]
+  ]
+  [ fullMap model ]
 
 fullMap : Model ->Html
 fullMap model =
@@ -71,13 +74,10 @@ fullMap model =
     ]
   ]
 
-view : Model -> Html
-view model = div
-  [ style
-      [ ("width", (toString width) ++ "px")
-      , ("height", (toString height) ++ "px")
-      , ("overflow", "hidden")
-      , ("border", "2px solid black")
-      ]
-  ]
-  [ fullMap model ]
+row : List Html -> Html
+row divs =
+   div [style [("height",  "32px")]] divs
+
+column : List Html -> Html
+column divs =
+   div [] divs

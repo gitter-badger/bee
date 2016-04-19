@@ -10799,10 +10799,10 @@ Elm.Map.make = function (_elm) {
                             ,VerticalScroll: VerticalScroll
                             ,HorizontalScroll: HorizontalScroll
                             ,update: update
-                            ,row: row
-                            ,column: column
+                            ,view: view
                             ,fullMap: fullMap
-                            ,view: view};
+                            ,row: row
+                            ,column: column};
 };Elm.Main = Elm.Main || {};
 Elm.Main.make = function (_elm) {
    "use strict";
@@ -10913,7 +10913,7 @@ Elm.Main.make = function (_elm) {
       var _p21 = _p20;
       var _p23 = _p21.y;
       var _p22 = _p21.x;
-      var scale = isRunning ? 2 : 1;
+      var scale = isRunning ? 4 : 2;
       var newVel = function (n) {    return _U.eq(_p22,0) || _U.eq(_p23,0) ? scale * $Basics.toFloat(n) : scale * $Basics.toFloat(n) / $Basics.sqrt(2);};
       return _U.update(model,{vx: newVel(_p22),vy: newVel(_p23)});
    });
