@@ -10712,7 +10712,6 @@ Elm.Map.make = function (_elm) {
    var row = function (divs) {    return A2($Html.div,_U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "height",_1: "32px"}]))]),divs);};
    var HorizontalScroll = function (a) {    return {ctor: "HorizontalScroll",_0: a};};
    var VerticalScroll = function (a) {    return {ctor: "VerticalScroll",_0: a};};
-   var Model = F2(function (a,b) {    return {top: a,left: b};});
    var _p0 = {ctor: "_Tuple2",_0: 224,_1: 224};
    var width = _p0._0;
    var height = _p0._1;
@@ -10831,7 +10830,9 @@ Elm.Map.make = function (_elm) {
                                               ,{ctor: "_Tuple2",_0: "border",_1: "2px solid black"}]))]),
       _U.list([fullMap(model)]));
    };
+   var Model = F2(function (a,b) {    return {top: a,left: b};});
    return _elm.Map.values = {_op: _op
+                            ,Model: Model
                             ,fullMapHeight: fullMapHeight
                             ,fullMapWidth: fullMapWidth
                             ,height: height
@@ -10840,7 +10841,6 @@ Elm.Map.make = function (_elm) {
                             ,halfWidth: halfWidth
                             ,overflowWidth: overflowWidth
                             ,overflowHeight: overflowHeight
-                            ,Model: Model
                             ,init: init
                             ,VerticalScroll: VerticalScroll
                             ,HorizontalScroll: HorizontalScroll
@@ -10927,49 +10927,51 @@ Elm.Main.make = function (_elm) {
    });
    var updateMap = F2(function (dt,_p8) {
       var _p9 = _p8;
-      var _p13 = _p9.y;
-      var _p12 = _p9.x;
-      var _p11 = _p9.vy;
-      var _p10 = _p9.vx;
-      var movingLeft = _U.cmp(_p10,0) < 0;
-      var movingRight = _U.cmp(_p10,0) > 0;
-      var movingDown = _U.cmp(_p11,0) < 0;
-      var movingUp = _U.cmp(_p11,0) > 0;
-      var top = $Map.height;
-      var right = $Map.width;
-      var left = 0;
-      var bottom = 0;
-      var action = _U.eq(_p12,left) && movingLeft ? $Map.HorizontalScroll($Basics.round(dt * _p10)) : _U.eq(_p12 + 32,
-      right) && movingRight ? $Map.HorizontalScroll($Basics.round(dt * _p10)) : _U.eq(_p13,
-      top) && movingUp ? $Map.VerticalScroll($Basics.round(dt * _p11)) : _U.eq(_p13 - 32,
-      bottom) && movingDown ? $Map.VerticalScroll($Basics.round(dt * _p11)) : $Map.HorizontalScroll(0);
+      var _p15 = _p9.y;
+      var _p14 = _p9.x;
+      var _p13 = _p9.vy;
+      var _p12 = _p9.vx;
+      var _p10 = {ctor: "_Tuple4",_0: _U.cmp(_p13,0) > 0,_1: _U.cmp(_p13,0) < 0,_2: _U.cmp(_p12,0) > 0,_3: _U.cmp(_p12,0) < 0};
+      var movingUp = _p10._0;
+      var movingDown = _p10._1;
+      var movingRight = _p10._2;
+      var movingLeft = _p10._3;
+      var _p11 = {ctor: "_Tuple4",_0: 0,_1: 0,_2: $Map.width,_3: $Map.height};
+      var bottom = _p11._0;
+      var left = _p11._1;
+      var right = _p11._2;
+      var top = _p11._3;
+      var action = _U.eq(_p14,left) && movingLeft ? $Map.HorizontalScroll($Basics.round(dt * _p12)) : _U.eq(_p14 + 32,
+      right) && movingRight ? $Map.HorizontalScroll($Basics.round(dt * _p12)) : _U.eq(_p15,
+      top) && movingUp ? $Map.VerticalScroll($Basics.round(dt * _p13)) : _U.eq(_p15 - 32,
+      bottom) && movingDown ? $Map.VerticalScroll($Basics.round(dt * _p13)) : $Map.HorizontalScroll(0);
       return _U.update(_p9,{map: A2($Map.update,action,_p9.map)});
    });
-   var updatePosition = F2(function (dt,_p14) {
-      var _p15 = _p14;
-      return _U.update(_p15,{x: A3($Basics.clamp,0,$Map.width - 32,_p15.x + dt * _p15.vx),y: A3($Basics.clamp,32,$Map.height,_p15.y + dt * _p15.vy)});
-   });
-   var setDirection = F2(function (_p16,model) {
+   var updatePosition = F2(function (dt,_p16) {
       var _p17 = _p16;
-      var _p19 = _p17.y;
-      var _p18 = _p17.x;
+      return _U.update(_p17,{x: A3($Basics.clamp,0,$Map.width - 32,_p17.x + dt * _p17.vx),y: A3($Basics.clamp,32,$Map.height,_p17.y + dt * _p17.vy)});
+   });
+   var setDirection = F2(function (_p18,model) {
+      var _p19 = _p18;
+      var _p21 = _p19.y;
+      var _p20 = _p19.x;
       return _U.update(model,
-      {dir: _U.cmp(_p18,0) > 0 ? "east" : _U.cmp(_p18,0) < 0 ? "west" : _U.cmp(_p19,0) < 0 ? "south" : _U.cmp(_p19,0) > 0 ? "north" : model.dir});
+      {dir: _U.cmp(_p20,0) > 0 ? "east" : _U.cmp(_p20,0) < 0 ? "west" : _U.cmp(_p21,0) < 0 ? "south" : _U.cmp(_p21,0) > 0 ? "north" : model.dir});
    });
-   var newVelocity = F3(function (isRunning,_p20,model) {
-      var _p21 = _p20;
-      var _p23 = _p21.y;
-      var _p22 = _p21.x;
+   var newVelocity = F3(function (isRunning,_p22,model) {
+      var _p23 = _p22;
+      var _p25 = _p23.y;
+      var _p24 = _p23.x;
       var scale = isRunning ? 4 : 2;
-      var newVel = function (n) {    return _U.eq(_p22,0) || _U.eq(_p23,0) ? scale * $Basics.toFloat(n) : scale * $Basics.toFloat(n) / $Basics.sqrt(2);};
-      return _U.update(model,{vx: newVel(_p22),vy: newVel(_p23)});
+      var newVel = function (n) {    return _U.eq(_p24,0) || _U.eq(_p25,0) ? scale * $Basics.toFloat(n) : scale * $Basics.toFloat(n) / $Basics.sqrt(2);};
+      return _U.update(model,{vx: newVel(_p24),vy: newVel(_p25)});
    });
-   var updateSprite = function (_p24) {    var _p25 = _p24;var newSprite = _U.eq(_p25.sprite,0) ? 1 : 0;return _U.update(_p25,{sprite: newSprite});};
-   var update = F2(function (_p26,model) {
-      var _p27 = _p26;
-      var _p29 = _p27._0;
-      var _p28 = _p27._1;
-      return updateSprite(A2(updateMap,_p29,A2(updatePosition,_p29,A2(setDirection,_p28,A3(newVelocity,_p27._2,_p28,model)))));
+   var updateSprite = function (_p26) {    var _p27 = _p26;var newSprite = _U.eq(_p27.sprite,0) ? 1 : 0;return _U.update(_p27,{sprite: newSprite});};
+   var update = F2(function (_p28,model) {
+      var _p29 = _p28;
+      var _p31 = _p29._0;
+      var _p30 = _p29._1;
+      return updateSprite(A2(updateMap,_p31,A2(updatePosition,_p31,A2(setDirection,_p30,A3(newVelocity,_p29._2,_p30,model)))));
    });
    var Model = F7(function (a,b,c,d,e,f,g) {    return {x: a,y: b,vx: c,vy: d,dir: e,sprite: f,map: g};});
    var initialModel = A7(Model,$Map.halfWidth,$Map.halfHeight,0,0,"north",0,$Map.init);
