@@ -101,24 +101,21 @@ updateMap dt ({x,y,vx,vy,map} as model) =
        movingDown = vy < 0
        movingRight = vx > 0
        movingLeft = vx < 0
-       _ = Debug.watch "(x+32,y)" (x+32,y)
-       -- _ = Debug.watch "(top,bottom,left,right)" (top,bottom,left,right)
-       _ = Debug.watch "(mUp,mDown,mLeft,mRight)" (movingUp, movingDown, movingLeft, movingRight)
        action : Map.Action
        action =
          if x == left && movingLeft then
-            Map.ScrollLeft (round (dt*vx))
+            Map.HorizontalScroll (round (dt*vx))
          else if (x+32) == right && movingRight then
-            Map.ScrollRight (round (dt*vx))
+            Map.HorizontalScroll (round (dt*vx))
          else if y == top && movingUp then
-            Map.ScrollUp (round (dt*vy))
+            Map.VerticalScroll (round (dt*vy))
          else if (y-32) == bottom && movingDown then
-            Map.ScrollDown (round (dt*vy))
+            Map.VerticalScroll (round (dt*vy))
          else
-            Map.ScrollLeft 0
+            Map.HorizontalScroll 0
      
     in { model |
-          map = Map.update (Debug.watch "action" action) map
+          map = Map.update action map
        }
 
 

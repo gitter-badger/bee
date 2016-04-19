@@ -10712,9 +10712,7 @@ Elm.Map.make = function (_elm) {
    var row = function (divs) {    return A2($Html.div,_U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "height",_1: "32px"}]))]),divs);};
    var ScrollRight = function (a) {    return {ctor: "ScrollRight",_0: a};};
    var ScrollLeft = function (a) {    return {ctor: "ScrollLeft",_0: a};};
-   var ScrollDown = function (a) {    return {ctor: "ScrollDown",_0: a};};
-   var ScrollUp = function (a) {    return {ctor: "ScrollUp",_0: a};};
-   var init = {top: -32,left: -32};
+   var VerticalScroll = function (a) {    return {ctor: "VerticalScroll",_0: a};};
    var Model = F2(function (a,b) {    return {top: a,left: b};});
    var _p0 = {ctor: "_Tuple2",_0: 224,_1: 224};
    var width = _p0._0;
@@ -10727,11 +10725,11 @@ Elm.Map.make = function (_elm) {
    var fullMapHeight = _p2._1;
    var overflowWidth = fullMapWidth - width;
    var overflowHeight = fullMapHeight - height;
+   var init = {top: $Basics.round(0 - overflowHeight / 2),left: $Basics.round(0 - overflowWidth / 2)};
    var update = F2(function (action,model) {
       var _p3 = action;
       switch (_p3.ctor)
-      {case "ScrollUp": return _U.update(model,{top: A3($Basics.clamp,0 - overflowHeight,0,model.top + _p3._0)});
-         case "ScrollDown": return _U.update(model,{top: A3($Basics.clamp,0 - overflowHeight,0,model.top + _p3._0)});
+      {case "VerticalScroll": return _U.update(model,{top: A3($Basics.clamp,0 - overflowHeight,0,model.top + _p3._0)});
          case "ScrollLeft": return _U.update(model,{left: A3($Basics.clamp,0 - overflowWidth,0,model.left - _p3._0)});
          default: return _U.update(model,{left: A3($Basics.clamp,0 - overflowWidth,0,model.left - _p3._0)});}
    });
@@ -10844,8 +10842,7 @@ Elm.Map.make = function (_elm) {
                             ,overflowHeight: overflowHeight
                             ,Model: Model
                             ,init: init
-                            ,ScrollUp: ScrollUp
-                            ,ScrollDown: ScrollDown
+                            ,VerticalScroll: VerticalScroll
                             ,ScrollLeft: ScrollLeft
                             ,ScrollRight: ScrollRight
                             ,update: update
@@ -10947,8 +10944,8 @@ Elm.Main.make = function (_elm) {
       var bottom = 0;
       var action = _U.eq(_p14,left) && movingLeft ? $Map.ScrollLeft($Basics.round(dt * _p12)) : _U.eq(_p14 + 32,
       right) && movingRight ? $Map.ScrollRight($Basics.round(dt * _p12)) : _U.eq(_p15,
-      top) && movingUp ? $Map.ScrollUp($Basics.round(dt * _p13)) : _U.eq(_p15 - 32,
-      bottom) && movingDown ? $Map.ScrollDown($Basics.round(dt * _p13)) : $Map.ScrollLeft(0);
+      top) && movingUp ? $Map.VerticalScroll($Basics.round(dt * _p13)) : _U.eq(_p15 - 32,
+      bottom) && movingDown ? $Map.VerticalScroll($Basics.round(dt * _p13)) : $Map.ScrollLeft(0);
       return _U.update(_p9,{map: A2($Map.update,A2($Debug.watch,"action",action),_p9.map)});
    });
    var updatePosition = F2(function (dt,_p16) {

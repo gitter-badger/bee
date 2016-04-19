@@ -15,32 +15,26 @@ overflowWidth = fullMapWidth - width
 overflowHeight = fullMapHeight - height
 
 -- The model contains the starting coordinates
--- of the visible map
+-- of the visible part of the map
 type alias Model =
   { top : Int
   , left : Int
   }
 
 init : Model
-init = { top=-32, left=-32 }
+init = { top = round -(overflowHeight/2), left= round -(overflowWidth/2) }
 
 -- Update
-type Action = ScrollUp Int
-            | ScrollDown Int
-            | ScrollLeft Int
-            | ScrollRight Int
+type Action = VerticalScroll Int
+            | HorizontalScroll Int
 
 update : Action -> Model -> Model
 update action model =
   case action of
-    ScrollUp i ->
+    VerticalScroll i ->
       { model | top = clamp -overflowHeight 0 (model.top + i) }
-    ScrollDown i ->
-      { model | top = clamp -overflowHeight 0 (model.top + i) }
-    ScrollLeft i ->
+    HorizontalScroll i ->
       { model | left = clamp -overflowWidth 0 (model.left - i) }
-    ScrollRight i ->
-      { model | left = clamp -overflowWidth 0  (model.left - i) }
 
 -- View
 
