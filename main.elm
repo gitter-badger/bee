@@ -18,6 +18,7 @@ type alias Model =
   , vx : Float
   , vy : Float
   , dir : String
+  , orientation : String
   , sprite : Int
   , map : Map.Model
   }
@@ -25,7 +26,7 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-  Model halfWidth halfHeight 0 0 "north" 0 Map.init
+  Model halfWidth halfHeight 0 0 "left" "toward" 0 Map.init
 
 
 
@@ -80,15 +81,18 @@ newVelocity isRunning { x, y } model =
 setDirection : { x : Int, y : Int } -> Model -> Model
 setDirection { x, y } model =
   { model
-    | dir =
-        if x > 0 then
-          "east"
-        else if x < 0 then
-          "west"
-        else if y < 0 then
-          "south"
+    | orientation =
+        if y < 0 then
+          "toward"
         else if y > 0 then
-          "north"
+          "away"
+        else
+          model.orientation
+    , dir =
+        if x > 0 then
+          "right"
+        else if x < 0 then
+          "left"
         else
           model.dir
   }
@@ -174,36 +178,36 @@ view ( w, h ) ({ x, y, vx, vy, dir, sprite } as model) =
 
 
 viewBee : Model -> Html
-viewBee { x, y, vx, vy, dir, sprite } =
+viewBee { x, y, vx, vy, dir, orientation, sprite } =
   let
     beeImage =
-      case ( dir, sprite ) of
-        ( "north", 0 ) ->
-          northBee1
+      case ( dir, orientation, sprite ) of
+        ( "left", "toward", 0 ) ->
+          southWestBee1
 
-        ( "north", 1 ) ->
-          northBee2
+        ( "left", "toward", 1 ) ->
+          southWestBee2
 
-        ( "south", 0 ) ->
-          southBee1
+        ( "left", "away", 0 ) ->
+          northWestBee1
 
-        ( "south", 1 ) ->
-          southBee2
+        ( "left", "away", 1 ) ->
+          northWestBee2
 
-        ( "east", 0 ) ->
-          eastBee1
+        ( "right", "toward", 0 ) ->
+          southEastBee1
 
-        ( "east", 1 ) ->
-          eastBee2
+        ( "right", "toward", 1 ) ->
+          southEastBee2
 
-        ( "west", 0 ) ->
-          westBee1
+        ( "right", "away", 0 ) ->
+          northEastBee1
 
-        ( "west", 1 ) ->
-          westBee2
+        ( "right", "away", 1 ) ->
+          northEastBee2
 
-        ( _, _ ) ->
-          northBee1
+        ( _, _, _ ) ->
+          southWestBee1
   in
     div
       [ style

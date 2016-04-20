@@ -10602,15 +10602,15 @@ Elm.Sprite.make = function (_elm) {
                                                A2($Basics._op["++"],"px -",A2($Basics._op["++"],$Basics.toString(_p1._1),"px"))))}]))]),
       _U.list([]));
    });
-   var beeFromSpriteSheet = imgFromSpriteSheet("bee4.png");
-   var northBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 0});
-   var northBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 0});
-   var southBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 32});
-   var southBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 32});
-   var eastBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 32});
-   var eastBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 96,_1: 32});
-   var westBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 0});
-   var westBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 96,_1: 0});
+   var beeFromSpriteSheet = imgFromSpriteSheet("newbee.png");
+   var northWestBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 0});
+   var northWestBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 32});
+   var northEastBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 0});
+   var northEastBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 0});
+   var southWestBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 32});
+   var southWestBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 32});
+   var southEastBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 64});
+   var southEastBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 64});
    var tileFromSpriteSheet = imgFromSpriteSheet("dirtpath.png");
    var grass1 = tileFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 0});
    var rightDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 32});
@@ -10626,14 +10626,14 @@ Elm.Sprite.make = function (_elm) {
    return _elm.Sprite.values = {_op: _op
                                ,imgFromSpriteSheet: imgFromSpriteSheet
                                ,beeFromSpriteSheet: beeFromSpriteSheet
-                               ,northBee1: northBee1
-                               ,northBee2: northBee2
-                               ,southBee1: southBee1
-                               ,southBee2: southBee2
-                               ,eastBee1: eastBee1
-                               ,eastBee2: eastBee2
-                               ,westBee1: westBee1
-                               ,westBee2: westBee2
+                               ,northWestBee1: northWestBee1
+                               ,northWestBee2: northWestBee2
+                               ,northEastBee1: northEastBee1
+                               ,northEastBee2: northEastBee2
+                               ,southWestBee1: southWestBee1
+                               ,southWestBee2: southWestBee2
+                               ,southEastBee1: southEastBee1
+                               ,southEastBee2: southEastBee2
                                ,tileFromSpriteSheet: tileFromSpriteSheet
                                ,grass1: grass1
                                ,rightDirt: rightDirt
@@ -10830,24 +10830,32 @@ Elm.Main.make = function (_elm) {
    var viewBee = function (_p0) {
       var _p1 = _p0;
       var beeImage = function () {
-         var _p2 = {ctor: "_Tuple2",_0: _p1.dir,_1: _p1.sprite};
+         var _p2 = {ctor: "_Tuple3",_0: _p1.dir,_1: _p1.orientation,_2: _p1.sprite};
          _v1_8: do {
-            switch (_p2._1)
-            {case 0: switch (_p2._0)
-                 {case "north": return $Sprite.northBee1;
-                    case "south": return $Sprite.southBee1;
-                    case "east": return $Sprite.eastBee1;
-                    case "west": return $Sprite.westBee1;
+            switch (_p2._0)
+            {case "left": switch (_p2._1)
+                 {case "toward": switch (_p2._2)
+                      {case 0: return $Sprite.southWestBee1;
+                         case 1: return $Sprite.southWestBee2;
+                         default: break _v1_8;}
+                    case "away": switch (_p2._2)
+                      {case 0: return $Sprite.northWestBee1;
+                         case 1: return $Sprite.northWestBee2;
+                         default: break _v1_8;}
                     default: break _v1_8;}
-               case 1: switch (_p2._0)
-                 {case "north": return $Sprite.northBee2;
-                    case "south": return $Sprite.southBee2;
-                    case "east": return $Sprite.eastBee2;
-                    case "west": return $Sprite.westBee2;
+               case "right": switch (_p2._1)
+                 {case "toward": switch (_p2._2)
+                      {case 0: return $Sprite.southEastBee1;
+                         case 1: return $Sprite.southEastBee2;
+                         default: break _v1_8;}
+                    case "away": switch (_p2._2)
+                      {case 0: return $Sprite.northEastBee1;
+                         case 1: return $Sprite.northEastBee2;
+                         default: break _v1_8;}
                     default: break _v1_8;}
                default: break _v1_8;}
          } while (false);
-         return $Sprite.northBee1;
+         return $Sprite.southWestBee1;
       }();
       return A2($Html.div,
       _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: "32px"}
@@ -10909,7 +10917,8 @@ Elm.Main.make = function (_elm) {
       var _p21 = _p19.y;
       var _p20 = _p19.x;
       return _U.update(model,
-      {dir: _U.cmp(_p20,0) > 0 ? "east" : _U.cmp(_p20,0) < 0 ? "west" : _U.cmp(_p21,0) < 0 ? "south" : _U.cmp(_p21,0) > 0 ? "north" : model.dir});
+      {orientation: _U.cmp(_p21,0) < 0 ? "toward" : _U.cmp(_p21,0) > 0 ? "away" : model.orientation
+      ,dir: _U.cmp(_p20,0) > 0 ? "right" : _U.cmp(_p20,0) < 0 ? "left" : model.dir});
    });
    var newVelocity = F3(function (isRunning,_p22,model) {
       var _p23 = _p22;
@@ -10926,8 +10935,8 @@ Elm.Main.make = function (_elm) {
       var _p30 = _p29._1;
       return updateSprite(A2(updateMap,_p31,A2(updatePosition,_p31,A2(setDirection,_p30,A3(newVelocity,_p29._2,_p30,model)))));
    });
-   var Model = F7(function (a,b,c,d,e,f,g) {    return {x: a,y: b,vx: c,vy: d,dir: e,sprite: f,map: g};});
-   var initialModel = A7(Model,$Map.halfWidth,$Map.halfHeight,0,0,"north",0,$Map.init);
+   var Model = F8(function (a,b,c,d,e,f,g,h) {    return {x: a,y: b,vx: c,vy: d,dir: e,orientation: f,sprite: g,map: h};});
+   var initialModel = A8(Model,$Map.halfWidth,$Map.halfHeight,0,0,"left","toward",0,$Map.init);
    var main = A3($Signal.map2,view,$Window.dimensions,A3($Signal.foldp,update,initialModel,input));
    return _elm.Main.values = {_op: _op
                              ,Model: Model

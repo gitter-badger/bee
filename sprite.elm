@@ -25,39 +25,39 @@ imgFromSpriteSheet spriteSheet ( x, y ) =
 
 
 beeFromSpriteSheet =
-  imgFromSpriteSheet "bee4.png"
+  imgFromSpriteSheet "newbee.png"
 
 
-northBee1 =
-  beeFromSpriteSheet ( 0, 0 )
-
-
-northBee2 =
+northWestBee1 =
   beeFromSpriteSheet ( 64, 0 )
 
 
-southBee1 =
+northWestBee2 =
   beeFromSpriteSheet ( 0, 32 )
 
 
-southBee2 =
-  beeFromSpriteSheet ( 64, 32 )
+northEastBee1 =
+  beeFromSpriteSheet ( 0, 0 )
 
 
-eastBee1 =
-  beeFromSpriteSheet ( 32, 32 )
-
-
-eastBee2 =
-  beeFromSpriteSheet ( 96, 32 )
-
-
-westBee1 =
+northEastBee2 =
   beeFromSpriteSheet ( 32, 0 )
 
 
-westBee2 =
-  beeFromSpriteSheet ( 96, 0 )
+southWestBee1 =
+  beeFromSpriteSheet ( 32, 32 )
+
+
+southWestBee2 =
+  beeFromSpriteSheet ( 64, 32 )
+
+
+southEastBee1 =
+  beeFromSpriteSheet ( 0, 64 )
+
+
+southEastBee2 =
+  beeFromSpriteSheet ( 32, 64 )
 
 
 
