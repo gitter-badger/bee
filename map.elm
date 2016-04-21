@@ -97,15 +97,15 @@ fullMap model =
           ]
       ]
       [ column
-          [ (row [ grass1, grass1, grass2, grass1, grass2, rightDirt, dirt, leftDirt, grass1 ])
-          , (row [ dirt, dirt, dirt, dirt, dirt, dirt, dirt, leftDirt, grass1 ])
-          , (row [ grass1, grass2, grass1, grass2, grass1, rightDirt, dirt, leftDirt, grass2 ])
-          , (row [ grass2, grass1, grass2, grass1, grass2, rightDirt, dirt, leftDirt, grass1 ])
-          , (row [ grass1, grass2, grass1, grass2, grass1, rightDirt, dirt, leftDirt, grass2 ])
-          , (row [ grass2, grass2, grass1, grass2, grass1, rightDirt, dirt, leftDirt, grass1 ])
-          , (row [ grass1, grass1, grass1, grass2, grass1, rightDirt, dirt, dirt, dirt ])
-          , (row [ grass2, grass1, grass1, grass2, grass1, rightDirt, dirt, leftDirt, grass2 ])
-          , (row [ grass2, grass1, grass1, grass2, grass1, grass2, topDirt, grass1, grass2 ])
+          [ (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+          , (row [ horzPath, horzPath, horzPath, horzPath, horzPath, horzPath, crossPath, horzPath, horzPath ])
+          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
           ]
       ]
 

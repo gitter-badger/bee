@@ -25,7 +25,7 @@ imgFromSpriteSheet spriteSheet ( x, y ) =
 
 
 beeFromSpriteSheet =
-  imgFromSpriteSheet "newbee.png"
+  imgFromSpriteSheet "bee.png"
 
 
 northWestBee1 =
@@ -66,48 +66,24 @@ southEastBee2 =
 
 tileFromSpriteSheet : ( Int, Int ) -> Html
 tileFromSpriteSheet =
-  imgFromSpriteSheet "dirtpath.png"
+  imgFromSpriteSheet "terrain.png"
 
 
-grass1 =
+grass =
   tileFromSpriteSheet ( 0, 0 )
 
 
-rightDirt =
-  tileFromSpriteSheet ( 0, 32 )
-
-
-bottomLeftDirt =
-  tileFromSpriteSheet ( 0, 64 )
-
-
-grass2 =
+vertPath =
   tileFromSpriteSheet ( 32, 0 )
 
 
-dirt =
-  tileFromSpriteSheet ( 32, 32 )
-
-
-bottomRightDirt =
-  tileFromSpriteSheet ( 32, 64 )
-
-
-bottomDirt =
+crossPath =
   tileFromSpriteSheet ( 64, 0 )
 
 
-leftDirt =
-  tileFromSpriteSheet ( 64, 32 )
+horzPath =
+  tileFromSpriteSheet ( 0, 32 )
 
 
-topLeftDirt =
-  tileFromSpriteSheet ( 64, 64 )
-
-
-topDirt =
-  tileFromSpriteSheet ( 96, 0 )
-
-
-topRightDirt =
-  tileFromSpriteSheet ( 96, 32 )
+tPath =
+  tileFromSpriteSheet ( 32, 32 )

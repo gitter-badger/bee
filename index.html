@@ -10602,7 +10602,7 @@ Elm.Sprite.make = function (_elm) {
                                                A2($Basics._op["++"],"px -",A2($Basics._op["++"],$Basics.toString(_p1._1),"px"))))}]))]),
       _U.list([]));
    });
-   var beeFromSpriteSheet = imgFromSpriteSheet("newbee.png");
+   var beeFromSpriteSheet = imgFromSpriteSheet("bee.png");
    var northWestBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 0});
    var northWestBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 32});
    var northEastBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 0});
@@ -10611,18 +10611,12 @@ Elm.Sprite.make = function (_elm) {
    var southWestBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 32});
    var southEastBee1 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 64});
    var southEastBee2 = beeFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 64});
-   var tileFromSpriteSheet = imgFromSpriteSheet("dirtpath.png");
-   var grass1 = tileFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 0});
-   var rightDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 32});
-   var bottomLeftDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 64});
-   var grass2 = tileFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 0});
-   var dirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 32});
-   var bottomRightDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 64});
-   var bottomDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 0});
-   var leftDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 32});
-   var topLeftDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 64});
-   var topDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 96,_1: 0});
-   var topRightDirt = tileFromSpriteSheet({ctor: "_Tuple2",_0: 96,_1: 32});
+   var tileFromSpriteSheet = imgFromSpriteSheet("terrain.png");
+   var grass = tileFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 0});
+   var vertPath = tileFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 0});
+   var crossPath = tileFromSpriteSheet({ctor: "_Tuple2",_0: 64,_1: 0});
+   var horzPath = tileFromSpriteSheet({ctor: "_Tuple2",_0: 0,_1: 32});
+   var tPath = tileFromSpriteSheet({ctor: "_Tuple2",_0: 32,_1: 32});
    return _elm.Sprite.values = {_op: _op
                                ,imgFromSpriteSheet: imgFromSpriteSheet
                                ,beeFromSpriteSheet: beeFromSpriteSheet
@@ -10635,17 +10629,11 @@ Elm.Sprite.make = function (_elm) {
                                ,southEastBee1: southEastBee1
                                ,southEastBee2: southEastBee2
                                ,tileFromSpriteSheet: tileFromSpriteSheet
-                               ,grass1: grass1
-                               ,rightDirt: rightDirt
-                               ,bottomLeftDirt: bottomLeftDirt
-                               ,grass2: grass2
-                               ,dirt: dirt
-                               ,bottomRightDirt: bottomRightDirt
-                               ,bottomDirt: bottomDirt
-                               ,leftDirt: leftDirt
-                               ,topLeftDirt: topLeftDirt
-                               ,topDirt: topDirt
-                               ,topRightDirt: topRightDirt};
+                               ,grass: grass
+                               ,vertPath: vertPath
+                               ,crossPath: crossPath
+                               ,horzPath: horzPath
+                               ,tPath: tPath};
 };Elm.Map = Elm.Map || {};
 Elm.Map.make = function (_elm) {
    "use strict";
@@ -10694,87 +10682,87 @@ Elm.Map.make = function (_elm) {
                                               ,{ctor: "_Tuple2",_0: "position",_1: "relative"}
                                               ,{ctor: "_Tuple2",_0: "top",_1: A2($Basics._op["++"],$Basics.toString(model.top),"px")}
                                               ,{ctor: "_Tuple2",_0: "left",_1: A2($Basics._op["++"],$Basics.toString(model.left),"px")}]))]),
-      _U.list([column(_U.list([row(_U.list([$Sprite.grass1
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.rightDirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.leftDirt
-                                           ,$Sprite.grass1]))
-                              ,row(_U.list([$Sprite.dirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.leftDirt
-                                           ,$Sprite.grass1]))
-                              ,row(_U.list([$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.rightDirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.leftDirt
-                                           ,$Sprite.grass2]))
-                              ,row(_U.list([$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.rightDirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.leftDirt
-                                           ,$Sprite.grass1]))
-                              ,row(_U.list([$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.rightDirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.leftDirt
-                                           ,$Sprite.grass2]))
-                              ,row(_U.list([$Sprite.grass2
-                                           ,$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.rightDirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.leftDirt
-                                           ,$Sprite.grass1]))
-                              ,row(_U.list([$Sprite.grass1
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.rightDirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.dirt]))
-                              ,row(_U.list([$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.rightDirt
-                                           ,$Sprite.dirt
-                                           ,$Sprite.leftDirt
-                                           ,$Sprite.grass2]))
-                              ,row(_U.list([$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass2
-                                           ,$Sprite.topDirt
-                                           ,$Sprite.grass1
-                                           ,$Sprite.grass2]))]))]));
+      _U.list([column(_U.list([row(_U.list([$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.vertPath
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass]))
+                              ,row(_U.list([$Sprite.horzPath
+                                           ,$Sprite.horzPath
+                                           ,$Sprite.horzPath
+                                           ,$Sprite.horzPath
+                                           ,$Sprite.horzPath
+                                           ,$Sprite.horzPath
+                                           ,$Sprite.crossPath
+                                           ,$Sprite.horzPath
+                                           ,$Sprite.horzPath]))
+                              ,row(_U.list([$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.vertPath
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass]))
+                              ,row(_U.list([$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.vertPath
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass]))
+                              ,row(_U.list([$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.vertPath
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass]))
+                              ,row(_U.list([$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.vertPath
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass]))
+                              ,row(_U.list([$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.vertPath
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass]))
+                              ,row(_U.list([$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.vertPath
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass]))
+                              ,row(_U.list([$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass
+                                           ,$Sprite.vertPath
+                                           ,$Sprite.grass
+                                           ,$Sprite.grass]))]))]));
    };
    var view = function (model) {
       return A2($Html.div,
