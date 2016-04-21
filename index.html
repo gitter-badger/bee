@@ -10820,28 +10820,31 @@ Elm.Main.make = function (_elm) {
       var beeImage = function () {
          var _p2 = {ctor: "_Tuple3",_0: _p1.dir,_1: _p1.orientation,_2: _p1.sprite};
          _v1_8: do {
-            switch (_p2._0)
-            {case "left": switch (_p2._1)
-                 {case "toward": switch (_p2._2)
-                      {case 0: return $Sprite.southWestBee1;
-                         case 1: return $Sprite.southWestBee2;
-                         default: break _v1_8;}
-                    case "away": switch (_p2._2)
-                      {case 0: return $Sprite.northWestBee1;
-                         case 1: return $Sprite.northWestBee2;
-                         default: break _v1_8;}
-                    default: break _v1_8;}
-               case "right": switch (_p2._1)
-                 {case "toward": switch (_p2._2)
-                      {case 0: return $Sprite.southEastBee1;
-                         case 1: return $Sprite.southEastBee2;
-                         default: break _v1_8;}
-                    case "away": switch (_p2._2)
-                      {case 0: return $Sprite.northEastBee1;
-                         case 1: return $Sprite.northEastBee2;
-                         default: break _v1_8;}
-                    default: break _v1_8;}
-               default: break _v1_8;}
+            if (_p2._0.ctor === "Left") {
+                  if (_p2._1.ctor === "Toward") {
+                        switch (_p2._2)
+                        {case 0: return $Sprite.southWestBee1;
+                           case 1: return $Sprite.southWestBee2;
+                           default: break _v1_8;}
+                     } else {
+                        switch (_p2._2)
+                        {case 0: return $Sprite.northWestBee1;
+                           case 1: return $Sprite.northWestBee2;
+                           default: break _v1_8;}
+                     }
+               } else {
+                  if (_p2._1.ctor === "Toward") {
+                        switch (_p2._2)
+                        {case 0: return $Sprite.southEastBee1;
+                           case 1: return $Sprite.southEastBee2;
+                           default: break _v1_8;}
+                     } else {
+                        switch (_p2._2)
+                        {case 0: return $Sprite.northEastBee1;
+                           case 1: return $Sprite.northEastBee2;
+                           default: break _v1_8;}
+                     }
+               }
          } while (false);
          return $Sprite.southWestBee1;
       }();
@@ -10900,23 +10903,27 @@ Elm.Main.make = function (_elm) {
       var _p17 = _p16;
       return _U.update(_p17,{x: A3($Basics.clamp,0,$Map.width - 32,_p17.x + dt * _p17.vx),y: A3($Basics.clamp,32,$Map.height,_p17.y + dt * _p17.vy)});
    });
-   var setDirection = F2(function (_p18,model) {
+   var newVelocity = F3(function (isRunning,_p18,model) {
       var _p19 = _p18;
       var _p21 = _p19.y;
       var _p20 = _p19.x;
-      return _U.update(model,
-      {orientation: _U.cmp(_p21,0) < 0 ? "toward" : _U.cmp(_p21,0) > 0 ? "away" : model.orientation
-      ,dir: _U.cmp(_p20,0) > 0 ? "right" : _U.cmp(_p20,0) < 0 ? "left" : model.dir});
-   });
-   var newVelocity = F3(function (isRunning,_p22,model) {
-      var _p23 = _p22;
-      var _p25 = _p23.y;
-      var _p24 = _p23.x;
       var scale = isRunning ? 4 : 2;
-      var newVel = function (n) {    return _U.eq(_p24,0) || _U.eq(_p25,0) ? scale * $Basics.toFloat(n) : scale * $Basics.toFloat(n) / $Basics.sqrt(2);};
-      return _U.update(model,{vx: newVel(_p24),vy: newVel(_p25)});
+      var newVel = function (n) {    return _U.eq(_p20,0) || _U.eq(_p21,0) ? scale * $Basics.toFloat(n) : scale * $Basics.toFloat(n) / $Basics.sqrt(2);};
+      return _U.update(model,{vx: newVel(_p20),vy: newVel(_p21)});
    });
-   var updateSprite = function (_p26) {    var _p27 = _p26;var newSprite = _U.eq(_p27.sprite,0) ? 1 : 0;return _U.update(_p27,{sprite: newSprite});};
+   var updateSprite = function (_p22) {    var _p23 = _p22;var newSprite = _U.eq(_p23.sprite,0) ? 1 : 0;return _U.update(_p23,{sprite: newSprite});};
+   var Away = {ctor: "Away"};
+   var Toward = {ctor: "Toward"};
+   var Right = {ctor: "Right"};
+   var Left = {ctor: "Left"};
+   var setDirection = F2(function (_p24,model) {
+      var _p25 = _p24;
+      var _p27 = _p25.y;
+      var _p26 = _p25.x;
+      return _U.update(model,
+      {orientation: _U.cmp(_p27,0) < 0 ? Toward : _U.cmp(_p27,0) > 0 ? Away : model.orientation
+      ,dir: _U.cmp(_p26,0) > 0 ? Right : _U.cmp(_p26,0) < 0 ? Left : model.dir});
+   });
    var update = F2(function (_p28,model) {
       var _p29 = _p28;
       var _p31 = _p29._0;
@@ -10924,10 +10931,14 @@ Elm.Main.make = function (_elm) {
       return updateSprite(A2(updateMap,_p31,A2(updatePosition,_p31,A2(setDirection,_p30,A3(newVelocity,_p29._2,_p30,model)))));
    });
    var Model = F8(function (a,b,c,d,e,f,g,h) {    return {x: a,y: b,vx: c,vy: d,dir: e,orientation: f,sprite: g,map: h};});
-   var initialModel = A8(Model,$Map.halfWidth,$Map.halfHeight,0,0,"left","toward",0,$Map.init);
+   var initialModel = A8(Model,$Map.halfWidth,$Map.halfHeight,0,0,Left,Toward,0,$Map.init);
    var main = A3($Signal.map2,view,$Window.dimensions,A3($Signal.foldp,update,initialModel,input));
    return _elm.Main.values = {_op: _op
                              ,Model: Model
+                             ,Left: Left
+                             ,Right: Right
+                             ,Toward: Toward
+                             ,Away: Away
                              ,initialModel: initialModel
                              ,update: update
                              ,updateSprite: updateSprite

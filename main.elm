@@ -12,21 +12,36 @@ import Map exposing (..)
 -- MODEL
 
 
+{-| Model contains the x,y coordinates of the sprite
+    as well as the velocity.
+    dir is either "left" or "right"
+    and orientation is either "toward" or "away"
+-}
 type alias Model =
   { x : Float
   , y : Float
   , vx : Float
   , vy : Float
-  , dir : String
-  , orientation : String
+  , dir : Direction
+  , orientation : Orientation
   , sprite : Int
   , map : Map.Model
   }
 
 
+type Direction
+  = Left
+  | Right
+
+
+type Orientation
+  = Toward
+  | Away
+
+
 initialModel : Model
 initialModel =
-  Model halfWidth halfHeight 0 0 "left" "toward" 0 Map.init
+  Model halfWidth halfHeight 0 0 Left Toward 0 Map.init
 
 
 
@@ -83,16 +98,16 @@ setDirection { x, y } model =
   { model
     | orientation =
         if y < 0 then
-          "toward"
+          Toward
         else if y > 0 then
-          "away"
+          Away
         else
           model.orientation
     , dir =
         if x > 0 then
-          "right"
+          Right
         else if x < 0 then
-          "left"
+          Left
         else
           model.dir
   }
@@ -182,28 +197,28 @@ viewBee { x, y, vx, vy, dir, orientation, sprite } =
   let
     beeImage =
       case ( dir, orientation, sprite ) of
-        ( "left", "toward", 0 ) ->
+        ( Left, Toward, 0 ) ->
           southWestBee1
 
-        ( "left", "toward", 1 ) ->
+        ( Left, Toward, 1 ) ->
           southWestBee2
 
-        ( "left", "away", 0 ) ->
+        ( Left, Away, 0 ) ->
           northWestBee1
 
-        ( "left", "away", 1 ) ->
+        ( Left, Away, 1 ) ->
           northWestBee2
 
-        ( "right", "toward", 0 ) ->
+        ( Right, Toward, 0 ) ->
           southEastBee1
 
-        ( "right", "toward", 1 ) ->
+        ( Right, Toward, 1 ) ->
           southEastBee2
 
-        ( "right", "away", 0 ) ->
+        ( Right, Away, 0 ) ->
           northEastBee1
 
-        ( "right", "away", 1 ) ->
+        ( Right, Away, 1 ) ->
           northEastBee2
 
         ( _, _, _ ) ->
