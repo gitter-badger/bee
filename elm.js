@@ -10721,7 +10721,6 @@ Elm.Map.make = function (_elm) {
          }
    });
    var fullMap = function (model) {
-      var _p4 = A2($Debug.watch,"(top, left)",{ctor: "_Tuple2",_0: model.top,_1: model.left});
       return A2($Html.div,
       _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "width",_1: A2($Basics._op["++"],$Basics.toString(fullMapWidth),"px")}
                                               ,{ctor: "_Tuple2",_0: "height",_1: A2($Basics._op["++"],$Basics.toString(fullMapHeight),"px")}

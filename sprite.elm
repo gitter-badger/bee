@@ -1,7 +1,7 @@
 module Sprite (..) where
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html exposing (Html, img)
+import Html.Attributes exposing (src, style)
 
 
 imgFromSpriteSheet : String -> ( Int, Int ) -> Html

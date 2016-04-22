@@ -1,12 +1,12 @@
 module Main (..) where
 
 import Keyboard
-import Time exposing (..)
+import Time exposing (Time, fps)
 import Window
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html exposing (Html, div)
+import Html.Attributes exposing (style)
 import Sprite exposing (..)
-import Map exposing (..)
+import Map
 
 
 -- MODEL
@@ -41,7 +41,7 @@ type Orientation
 
 initialModel : Model
 initialModel =
-  Model halfWidth halfHeight 0 0 Left Toward 0 Map.init
+  Model Map.halfWidth Map.halfHeight 0 0 Left Toward 0 Map.init
 
 
 

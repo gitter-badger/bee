@@ -1,17 +1,16 @@
 module Map (..) where
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html exposing (Html, div)
+import Html.Attributes exposing (style)
 import Sprite exposing (..)
 
 
 -- Model
--- TODO: figure out comment formatting
-{- The model contains the starting coordinates
--- of the visible part of the map
+
+
+{-| Model contains the offsets of the full map.
+--  We only see a part of the map at a time.
 -}
-
-
 type alias Model =
   { top : Int
   , left : Int
@@ -22,6 +21,9 @@ type alias Model =
   ( 288, 288 )
 
 
+{-| This is the width and height of
+    the visible portion of the map
+-}
 ( width, height ) =
   ( 224, 224 )
 
@@ -83,31 +85,27 @@ view model =
 
 fullMap : Model -> Html
 fullMap model =
-  let
-    _ =
-      Debug.watch "(top, left)" ( model.top, model.left )
-  in
-    div
-      [ style
-          [ ( "width", (toString fullMapWidth) ++ "px" )
-          , ( "height", (toString fullMapHeight) ++ "px" )
-          , ( "position", "relative" )
-          , ( "top", (toString model.top) ++ "px" )
-          , ( "left", (toString model.left) ++ "px" )
-          ]
-      ]
-      [ column
-          [ (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
-          , (row [ horzPath, horzPath, horzPath, horzPath, horzPath, horzPath, crossPath, horzPath, horzPath ])
-          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
-          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
-          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
-          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
-          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
-          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
-          , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
-          ]
-      ]
+  div
+    [ style
+        [ ( "width", (toString fullMapWidth) ++ "px" )
+        , ( "height", (toString fullMapHeight) ++ "px" )
+        , ( "position", "relative" )
+        , ( "top", (toString model.top) ++ "px" )
+        , ( "left", (toString model.left) ++ "px" )
+        ]
+    ]
+    [ column
+        [ (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+        , (row [ horzPath, horzPath, horzPath, horzPath, horzPath, horzPath, crossPath, horzPath, horzPath ])
+        , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+        , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+        , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+        , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+        , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+        , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+        , (row [ grass, grass, grass, grass, grass, grass, vertPath, grass, grass ])
+        ]
+    ]
 
 
 row : List Html -> Html
